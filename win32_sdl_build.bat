@@ -9,6 +9,12 @@ pushd build
 
 xcopy %SDL_path%\bin\SDL2.dll .
 
-gcc -std=c17 ..\src\sdl_joy.c %includes% %lib_path% -Wall -lmingw32 -lSDL2main -lSDL2 -o sdl_joy
+gcc -shared -w -o joy_app.dll ..\src\joy_app.c -Wl,--out-implib,libappdll.a
+
+gcc -shared -w %includes% %lib_path% -lmingw32 -lSDL2main -lSDL2 -o sdl_joy_opengl.dll ..\src\joy_app.c -Wl,--out-implib,libappdll.a
+
+gcc -std=c17 -w ..\src\sdl_joy.c %includes% %lib_path% -Wall -lmingw32 -lSDL2main -lSDL2 -o sdl_joy
 
 popd
+
+pause

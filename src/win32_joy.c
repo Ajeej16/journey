@@ -8,105 +8,32 @@
 #include "joy_platform.h"
 #include "win32_joy_renderer.h"
 
+#include "joy_load.h"
+
 global u8 running = 1;
 
-// TODO(ajeej): seperate for multi platform use
-global char buildDir[MAX_PATH];
-typedef struct loaded_code {
-    void *dll;
-    
-    char dllPath[MAX_PATH];
-    char *tempDLLName;
-    u32 tempDLLNum;
-    
-    u32 functionCount;
-    char **functionNames;
-    void **functions;
-    
-    u32 isValid;
-} loaded_code;
-
-internal void
-InitLoadedCode(loaded_code *code, void **functionTable,
-               char **functionNames, u32 functionCount,
-               char *buildDir, char *dllName, char *tempName)
+internal
+UNLOAD_LIB()
 {
-    code->dll = NULL;
-    CstrCatMany(code->dllPath, buildDir, "\\", dllName);
-    code->tempDLLName = tempName;
-    code->tempDLLNum = 0;
-    code->functionCount = functionCount;
-    code->functionNames = functionNames;
-    code->functions = functionTable;
-    code->isValid = 0;
+    FreeLibrary(handle);
 }
 
-internal void
-Win32UnloadCode(loaded_code *code)
+internal
+LOAD_LIB()
 {
-    if (code->dll)
-    {
-        FreeLibrary(code->dll);
-        code->dll = 0;
-    }
-    
-    code->isValid = 0;
+    return LoadLibraryA(filename);
 }
 
-internal void
-Win32LoadCode(loaded_code *code, char *buildDir)
+internal
+LOAD_FUNCTION()
 {
-    char *dllPath = code->dllPath;
-    char tempDLLPath[MAX_PATH];
-    char *tempDLLName = code->tempDLLName;
-    char number[4];
-    char ext[4];
-    
-    u32 periodIndex = CstrFindLast(tempDLLName, '.');
-    char *name = malloc(periodIndex+1);
-    memcpy(name, tempDLLName, periodIndex);
-    name[periodIndex] = '\0';
-    memcpy(ext, tempDLLName+periodIndex+1, 3);
-    ext[3] = '\0';
-    
-    for(u32 attempt = 0;
-        attempt < 128;
-        attempt++)
-    {
-        tempDLLPath[0] = '\0';
-        sprintf(number, "%d", code->tempDLLNum);
-        
-        CstrCatMany(tempDLLPath, buildDir, "\\", 
-                    name, number, ".", ext);
-        
-        if(++code->tempDLLNum >= 1024)
-            code->tempDLLNum = 0;
-        
-        if(CopyFile(dllPath, tempDLLPath, FALSE))
-            break;
-    }
-    
-    free(name);
-    
-    code->dll = LoadLibraryA(tempDLLPath);
-    if(code->dll)
-    {
-        code->isValid = 1;
-        for(u32 funcIdx = 0;
-            funcIdx < code->functionCount;
-            funcIdx++)
-        {
-            void *function = GetProcAddress(code->dll,
-                                            code->functionNames[funcIdx]);
-            if(function)
-                code->functions[funcIdx] = function;
-            else
-                code->isValid = 0;
-        }
-    }
-    
-    if(!code->isValid)
-        Win32UnloadCode(code);
+    return GetProcAddress(handle, funcName);
+}
+
+internal u32
+CreateCopyFile(char *filename, char *newFilename)
+{
+    return CopyFile(filename, newFilename, FALSE);
 }
 
 internal 
@@ -169,6 +96,8 @@ PLATFORM_READ_FILE(Win32ReadFile)
         // TODO(ajeej): error
     }
 }
+
+#include "joy_load.c"
 
 internal void
 Win32ProcessPendingMessages(HWND window, input_state *inputState)
@@ -326,22 +255,20 @@ int WinMain(HINSTANCE instance, HINSTANCE prevInstance,
                    "journey_app.dll",
                    "journey_app_temp.dll");
     
-    Win32LoadCode(&renderCode, buildDir);
-    Win32LoadCode(&appCode, buildDir);
+    LoadCode(&renderCode, buildDir);
+    LoadCode(&appCode, buildDir);
+    
+    ASSERT(renderCode.isValid && appCode.isValid);
     
     platform_functions platFunctions = {0};
     platFunctions.readFile = Win32ReadFile;
-    
-    ASSERT(renderCode.isValid && appCode.isValid);
     
     RECT rect = {0};
     GetClientRect(window, &rect);
     v2 winPos = vec2_init(rect.left, rect.top);
     v2 winDim = vec2_init(rect.right-rect.left, rect.bottom-rect.top);
     
-    u8 *shaderSource = NULL;
-    Win32ReadFile("W:\\journey\\shaders\\test.glsl", &shaderSource, NULL);
-    render_buffer *rb = renderFunctions.initRenderer(renderDC, winPos, winDim, shaderSource);
+    render_buffer *rb = renderFunctions.initRenderer(renderDC, winPos, winDim);
     
     ShowWindow(window, SW_SHOW);
     UpdateWindow(window);

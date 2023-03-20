@@ -1,139 +1,203 @@
 
-#include <stdio.h>
-#include <stdbool.h>
 #include <SDL2/SDL.h>
-#define WIDTH 640
-#define HEIGHT 480
-#define SIZE 200
-#define SPEED 600
-#define GRAVITY 60
-#define FPS 60
-#define JUMP -1200
+
+#include "joy_utils.h"
+#include "joy_math.h"
+#include "joy_renderer.h"
+#include "joy_input.h"
+#include "joy_platform.h"
+#include "sdl_joy_renderer.h"
+
+#include "joy_load.h"
+
+global u32 running = 1;
+
+internal
+UNLOAD_LIB()
+{
+    SDL_UnloadObject(handle);
+}
+
+internal
+LOAD_LIB()
+{
+    return SDL_LoadObject(filename);
+}
+
+internal
+LOAD_FUNCTION()
+{
+    return SDL_LoadFunction(handle, funcName);
+}
+
+internal u32
+CreateCopyFile(char *filename, char *newFilename)
+{
+    SDL_RWops *in = SDL_RWFromFile(filename, "rb");
+    if(!in)
+        return 0;
+    
+    SDL_RWseek(in, 0, RW_SEEK_END);
+    u64 size = SDL_RWtell(in);
+    SDL_RWseek(in, 0, RW_SEEK_SET);
+    
+    void *data = malloc(size);
+    
+    if(SDL_RWread(in, data, size, 1) <= 0)
+    {
+        SDL_RWclose(in);
+        return 0;
+    }
+    SDL_RWclose(in);
+    
+    SDL_RWops *ou = SDL_RWFromFile(newFilename, "wb");
+    if(!ou)
+        return 0;
+    
+    if(SDL_RWwrite(ou, data, size, 1) <= 0)
+    {
+        SDL_RWclose(ou);
+        return 0;
+    }
+    SDL_RWclose(ou);
+    
+    free(data);
+    
+    return 1;
+}
+
+internal
+PLATFORM_READ_FILE(SDLReadFile)
+{
+    void *data = 0;
+    u64 size = 0;
+    
+    data = SDL_LoadFile(path, &size);
+    
+    if(outSize)
+        *outSize = size;
+    
+    *outData = data;
+}
+
+#include "joy_load.c"
+
+internal void
+SDLProcessEvents(input_state *inputState)
+{
+    SDL_Event event = { 0 };
+    while(SDL_PollEvent(&event))
+    {
+        switch(event.type)
+        {
+            case SDL_QUIT: 
+            {
+                running = 0;
+            } break;
+            
+            case SDL_KEYUP:
+            case SDL_KEYDOWN:
+            {
+                u64 keyCode = event.key.keysym.sym;
+                u8 isDown = ((event.key.state & (1<<31)) == 0);
+                u64 key = 0;
+                u8 keyState = 0;
+                
+                // TODO(ajeej): Implement other keys
+                if(keyCode >= 'A' && keyCode <= 'Z')
+                    key = KEY_ID_A + (keyCode - 'A');
+                else if(keyCode >= '0' && keyCode <= '9')
+                    key = KEY_ID_0 + (keyCode - '0');
+                else if(keyCode == SDLK_SPACE)
+                    key = KEY_ID_SPACE;
+                else if(keyCode == SDLK_LCTRL)
+                    key = KEY_ID_CTRL;
+                
+                if(isDown)
+                {
+                    if((inputState->keyStates[key] & INPUT_DOWN) == 0)
+                    {
+                        keyState |= INPUT_PRESSED;
+                    }
+                    keyState |= INPUT_DOWN;
+                }
+                
+                inputState->keyStates[key] = keyState;
+            }
+        }
+    }
+}
 
 int main(int argc, char* argv[])
 {
-    /* Initializes the timer, audio, video, joystick,
-    haptic, gamecontroller and events subsystems */
-    if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
+    
+    if(SDL_Init(SDL_INIT_VIDEO))
     {
-        printf("Error initializing SDL: %s\n", SDL_GetError());
-        return 0;
+        // TODO(ajeej): error
+        return -1;
     }
-    /* Create a window */
-    SDL_Window* wind = SDL_CreateWindow("Hello Platformer!",
-                                        SDL_WINDOWPOS_CENTERED,
-                                        SDL_WINDOWPOS_CENTERED,
-                                        WIDTH, HEIGHT, 0);
-    if (!wind)
+    
+    SDL_Window *window = SDL_CreateWindow("SDL Journey",
+                                          SDL_WINDOWPOS_UNDEFINED,
+                                          SDL_WINDOWPOS_UNDEFINED,
+                                          800, 600,
+                                          SDL_WINDOW_OPENGL);
+    
+    if(!window)
     {
-        printf("Error creating window: %s\n", SDL_GetError());
         SDL_Quit();
-        return 0;
+        // TODO(ajeej): error
+        return -1;
     }
-    /* Create a renderer */
-    Uint32 render_flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
-    SDL_Renderer* rend = SDL_CreateRenderer(wind, -1, render_flags);
-    if (!rend)
+    
+    char *buildDir = SDL_GetBasePath();
+    
+    loaded_code renderCode = {0};
+    render_function_table renderFunctions = {0};
+    InitLoadedCode(&renderCode, (void **)&renderFunctions,
+                   renderFunctionNames,
+                   ARRAY_COUNT(renderFunctionNames),
+                   buildDir,
+                   "sdl_journey_opengl.dll",
+                   "sdl_journey_opengl_temp.dll");
+    
+    loaded_code appCode = {0};
+    app_function_table appFunctions = {0};
+    InitLoadedCode(&appCode, (void **)&appFunctions,
+                   appFunctionNames,
+                   ARRAY_COUNT(appFunctionNames),
+                   buildDir,
+                   "journey_app.dll",
+                   "journey_app_temp.dll");
+    
+    LoadCode(&renderCode, buildDir);
+    LoadCode(&appCode, buildDir);
+    
+    ASSERT(renderCode.isValid && appCode.isValid);
+    
+    platform_functions platFunctions = {0};
+    platFunctions.readFile = SDLReadFile;
+    
+    render_buffer *rb = renderFunctions.initRenderer(window);
+    
+    input_state *inputState = InitInputState();
+    
+    appFunctions.initApp(&platFunctions, rb);
+    
+    while(running)
     {
-        printf("Error creating renderer: %s\n", SDL_GetError());
-        SDL_DestroyWindow(wind);
-        SDL_Quit();
-        return 0;
+        SDLProcessEvents(inputState);
+        
+        renderFunctions.startFrame(rb);
+        
+        appFunctions.updateAndRender(rb, inputState);
+        
+        renderFunctions.endFrame(window, rb);
     }
-    /* Main loop */
-    bool running = true, jump_pressed = false, can_jump = true,
-    left_pressed = false, right_pressed = false;
-    float x_pos = (WIDTH-SIZE)/2, y_pos = (HEIGHT-SIZE)/2, x_vel = 0, y_vel = 0;
-    SDL_Rect rect = {(int) x_pos, (int) y_pos, SIZE, SIZE};
-    SDL_Event event;
-    while (running)
-    {
-        /* Process events */
-        while (SDL_PollEvent(&event))
-        {
-            switch (event.type)
-            {
-                case SDL_QUIT:
-                running = false;
-                break;
-                case SDL_KEYDOWN:
-                switch (event.key.keysym.scancode)
-                {
-                    case SDL_SCANCODE_SPACE:
-                    jump_pressed = true;
-                    break;
-                    case SDL_SCANCODE_A:
-                    case SDL_SCANCODE_LEFT:
-                    left_pressed = true;
-                    break;
-                    case SDL_SCANCODE_D:
-                    case SDL_SCANCODE_RIGHT:
-                    right_pressed = true;
-                    break;
-                    default:
-                    break;
-                }
-                break;
-                case SDL_KEYUP:
-                switch (event.key.keysym.scancode)
-                {
-                    case SDL_SCANCODE_SPACE:
-                    jump_pressed = false;
-                    break;
-                    case SDL_SCANCODE_A:
-                    case SDL_SCANCODE_LEFT:
-                    left_pressed = false;
-                    break;
-                    case SDL_SCANCODE_D:
-                    case SDL_SCANCODE_RIGHT:
-                    right_pressed = false;
-                    break;
-                    default:
-                    break;
-                }
-                break;
-                default:
-                break;
-            }
-        }
-        /* Clear screen */
-        SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
-        SDL_RenderClear(rend);
-        /* Move the rectangle */
-        x_vel = (right_pressed - left_pressed)*SPEED;
-        y_vel += GRAVITY;
-        if (jump_pressed && can_jump)
-        {
-            can_jump = false;
-            y_vel = JUMP;
-        }
-        x_pos += x_vel / 60;
-        y_pos += y_vel / 60;
-        if (x_pos <= 0)
-            x_pos = 0;
-        if (x_pos >= WIDTH - rect.w)
-            x_pos = WIDTH - rect.w;
-        if (y_pos <= 0)
-            y_pos = 0;
-        if (y_pos >= HEIGHT - rect.h)
-        {
-            y_vel = 0;
-            y_pos = HEIGHT - rect.h;
-            if (!jump_pressed)
-                can_jump = true;
-        }
-        rect.x = (int) x_pos;
-        rect.y = (int) y_pos;
-        /* Draw the rectangle */
-        SDL_SetRenderDrawColor(rend, 255, 0, 0, 255);
-        SDL_RenderFillRect(rend, &rect);
-        /* Draw to window and loop */
-        SDL_RenderPresent(rend);
-        SDL_Delay(1000/FPS);
-    }
-    /* Release resources */
-    SDL_DestroyRenderer(rend);
-    SDL_DestroyWindow(wind);
+    
+    // TODO(ajeej): renderer function clean up
+    SDL_DestroyWindow(window);
     SDL_Quit();
+    
     return 0;
 }
