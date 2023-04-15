@@ -1,0 +1,578 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="CMakePresetLoader">{
+  &quot;useNewFormat&quot;: true
+}</component>
+  <component name="CMakeRunConfigurationManager">
+    <generated>
+      <config projectName="journey" targetName="all" />
+    </generated>
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="1cca264b-650c-45b5-87da-c13806c6e899" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/BUGS.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/COPYING.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/CREDITS.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/INSTALL.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/Makefile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/README-SDL.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/README.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/WhatsNew.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/cmake/sdl2-config-version.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/cmake/sdl2-config.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/docs/CONTRIBUTING.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/docs/README-android.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/docs/README-cmake.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/docs/README-directfb.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/docs/README-dynapi.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/docs/README-emscripten.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/docs/README-gdk.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/docs/README-gesture.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/docs/README-git.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/docs/README-hg.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/docs/README-ios.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/docs/README-kmsbsd.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/docs/README-linux.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/docs/README-macos.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/docs/README-n3ds.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/docs/README-nacl.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/docs/README-ngage.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/docs/README-os2.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/docs/README-pandora.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/docs/README-platforms.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/docs/README-porting.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/docs/README-ps2.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/docs/README-psp.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/docs/README-raspberrypi.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/docs/README-riscos.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/docs/README-touch.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/docs/README-versions.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/docs/README-visualc.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/docs/README-vita.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/docs/README-wince.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/docs/README-windows.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/docs/README-winrt.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/docs/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/docs/doxyfile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/docs/release_checklist.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/bin/SDL2.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/bin/sdl2-config" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_assert.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_atomic.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_audio.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_bits.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_blendmode.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_clipboard.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_config.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_cpuinfo.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_egl.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_endian.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_error.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_events.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_filesystem.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_gamecontroller.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_gesture.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_guid.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_haptic.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_hidapi.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_hints.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_joystick.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_keyboard.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_keycode.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_loadso.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_locale.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_log.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_main.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_messagebox.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_metal.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_misc.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_mouse.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_mutex.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_name.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_opengl.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_opengl_glext.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_opengles.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_opengles2.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_opengles2_gl2.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_opengles2_gl2ext.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_opengles2_gl2platform.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_opengles2_khrplatform.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_pixels.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_platform.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_power.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_quit.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_rect.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_render.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_revision.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_rwops.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_scancode.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_sensor.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_shape.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_stdinc.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_surface.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_system.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_syswm.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_test.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_test_assert.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_test_common.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_test_compare.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_test_crc32.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_test_font.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_test_fuzzer.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_test_harness.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_test_images.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_test_log.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_test_md5.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_test_memory.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_test_random.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_thread.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_timer.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_touch.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_types.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_version.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_video.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/SDL_vulkan.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/begin_code.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/include/SDL2/close_code.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/lib/cmake/SDL2/sdl2-config-version.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/lib/cmake/SDL2/sdl2-config.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/lib/libSDL2.a" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/lib/libSDL2.dll.a" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/lib/libSDL2.la" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/lib/libSDL2_test.a" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/lib/libSDL2_test.la" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/lib/libSDL2main.a" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/lib/libSDL2main.la" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/lib/pkgconfig/sdl2.pc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/i686-w64-mingw32/share/aclocal/sdl2.m4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/COPYING" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/Makefile.in" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/Makefile.os2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/Makefile.w32" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/README" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/acinclude.m4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/autogen.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/axis.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/button.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/checkkeys.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/checkkeysthreads.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/configure" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/configure.ac" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/controllermap.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/controllermap.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/controllermap_back.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/emscripten/joystick-pre.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/icon.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/loopwave.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/loopwavequeue.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/moose.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/n3ds/logo48x48.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/nacl/Makefile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/nacl/background.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/nacl/common.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/nacl/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/nacl/manifest.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/picture.xbm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/relative_mode.markdown" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/sample.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/sample.wav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p01_shape24.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p01_shape32alpha.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p01_shape8.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p02_shape24.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p02_shape32alpha.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p02_shape8.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p03_shape24.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p03_shape8.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p04_shape1.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p04_shape24.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p04_shape32alpha.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p04_shape8.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p05_shape8.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p06_shape1alpha.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p06_shape24.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p06_shape32alpha.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p06_shape8.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p07_shape24.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p07_shape32alpha.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p07_shape8.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p08_shape24.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p08_shape32alpha.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p08_shape8.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p09_shape24.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p09_shape32alpha.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p09_shape8.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p10_shape1.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p10_shape24.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p10_shape32alpha.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p10_shape8.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p11_shape24.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p11_shape32alpha.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p11_shape8.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p12_shape24.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p12_shape8.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p13_shape24.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p13_shape32alpha.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p13_shape8.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p14_shape24.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p14_shape8.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p15_shape24.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p15_shape32alpha.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p15_shape8.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p16_shape1.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p16_shape24.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/p16_shape8.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/trollface_24.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/shapes/trollface_32alpha.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/template.test.in" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testatomic.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testaudiocapture.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testaudiohotplug.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testaudioinfo.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testautomation.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testautomation_audio.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testautomation_clipboard.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testautomation_events.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testautomation_guid.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testautomation_hints.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testautomation_joystick.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testautomation_keyboard.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testautomation_main.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testautomation_math.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testautomation_mouse.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testautomation_pixels.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testautomation_platform.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testautomation_rect.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testautomation_render.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testautomation_rwops.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testautomation_sdltest.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testautomation_stdlib.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testautomation_suites.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testautomation_surface.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testautomation_syswm.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testautomation_timer.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testautomation_video.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testbounds.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testcustomcursor.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testdisplayinfo.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testdraw2.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testdrawchessboard.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testdropfile.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testerror.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testevdev.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testfile.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testfilesystem.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testgamecontroller.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testgeometry.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testgesture.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testgl2.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testgles.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testgles2.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testgles2_sdf.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testgles2_sdf_img_normal.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testgles2_sdf_img_sdf.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testhaptic.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testhittesting.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testhotplug.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testiconv.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testime.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testintersections.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testjoystick.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testkeys.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testloadso.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testlocale.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testlock.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testmessage.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testmouse.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testmultiaudio.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testnative.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testnative.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testnativecocoa.m" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testnativeos2.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testnativew32.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testnativex11.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testoffscreen.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testoverlay2.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testplatform.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testpower.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testqsort.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testrelative.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testrendercopyex.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testrendertarget.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testresample.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testrumble.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testscale.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testsem.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testsensor.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testshader.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testshape.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testsprite2.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testspriteminimal.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/teststreaming.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testsurround.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testthread.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testtimer.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testurl.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testutils.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testutils.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testver.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testviewport.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testvulkan.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testwm2.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testyuv.bmp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testyuv.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testyuv_cvt.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/testyuv_cvt.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/torturethread.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/unifont-13.0.06-license.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/unifont-13.0.06.hex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/utf8.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/test/watcom.mif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/bin/SDL2.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/bin/sdl2-config" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_assert.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_atomic.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_audio.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_bits.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_blendmode.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_clipboard.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_config.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_cpuinfo.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_egl.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_endian.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_error.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_events.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_filesystem.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_gamecontroller.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_gesture.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_guid.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_haptic.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_hidapi.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_hints.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_joystick.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_keyboard.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_keycode.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_loadso.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_locale.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_log.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_main.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_messagebox.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_metal.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_misc.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_mouse.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_mutex.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_name.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_opengl.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_opengl_glext.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_opengles.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_opengles2.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_opengles2_gl2.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_opengles2_gl2ext.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_opengles2_gl2platform.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_opengles2_khrplatform.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_pixels.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_platform.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_power.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_quit.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_rect.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_render.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_revision.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_rwops.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_scancode.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_sensor.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_shape.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_stdinc.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_surface.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_system.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_syswm.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_test.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_test_assert.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_test_common.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_test_compare.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_test_crc32.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_test_font.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_test_fuzzer.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_test_harness.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_test_images.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_test_log.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_test_md5.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_test_memory.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_test_random.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_thread.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_timer.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_touch.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_types.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_version.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_video.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/SDL_vulkan.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/begin_code.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/include/SDL2/close_code.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/lib/cmake/SDL2/sdl2-config-version.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/lib/cmake/SDL2/sdl2-config.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/lib/libSDL2.a" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/lib/libSDL2.dll.a" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/lib/libSDL2.la" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/lib/libSDL2_test.a" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/lib/libSDL2_test.la" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/lib/libSDL2main.a" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/lib/libSDL2main.la" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/lib/pkgconfig/sdl2.pc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/SDL2-2.26.4/x86_64-w64-mingw32/share/aclocal/sdl2.m4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/glad/gl.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libappdll.a" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libgldll.a" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/SDL3.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/shaders/test.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/shaders/test.glsl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/joy_app.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/joy_app.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/joy_gl.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/joy_gl.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/sdl_joy.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/sdl_joy_opengl.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/sdl_joy_renderer.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/glfw_joy_renderer.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/win32_sdl_build.bat" beforeDir="false" afterPath="$PROJECT_DIR$/win32_sdl_build.bat" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MakefileLocalSettings">
+    <option name="availableProjects">
+      <map>
+        <entry>
+          <key>
+            <ExternalProjectPojo>
+              <option name="name" value="journey" />
+              <option name="path" value="$PROJECT_DIR$" />
+            </ExternalProjectPojo>
+          </key>
+          <value>
+            <list>
+              <ExternalProjectPojo>
+                <option name="name" value="journey" />
+                <option name="path" value="$PROJECT_DIR$" />
+              </ExternalProjectPojo>
+            </list>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="projectSyncType">
+      <map>
+        <entry key="$PROJECT_DIR$" value="RE_IMPORT" />
+      </map>
+    </option>
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectApplicationVersion">
+    <option name="ide" value="CLion" />
+    <option name="majorVersion" value="2022" />
+    <option name="minorVersion" value="2.1" />
+  </component>
+  <component name="ProjectId" id="2NKITiQxhqB5hDa4TUyu7XESHPQ" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "last_opened_file_path": "W:/journey/src",
+    "settings.editor.selected.configurable": "MakefileSettings"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="W:\journey\src" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="all" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="journey" TARGET_NAME="all" CONFIG_NAME="all" version="1" RUN_PATH="$PROJECT_DIR$/build/glfw_joy.exe">
+      <method v="2">
+        <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="1cca264b-650c-45b5-87da-c13806c6e899" name="Changes" comment="" />
+      <created>1679406363612</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1679406363612</updated>
+      <workItem from="1679406373382" duration="2285000" />
+      <workItem from="1679431066596" duration="5395000" />
+      <workItem from="1679491796512" duration="2475000" />
+      <workItem from="1680182980335" duration="1777000" />
+      <workItem from="1680728912085" duration="59000" />
+      <workItem from="1681426602580" duration="21767000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.glsl" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="XDebuggerManager">
+    <watches-manager>
+      <configuration name="CLionNativeAppRunConfigurationType">
+        <watch expression="(char *)data" language="ObjectiveC" />
+        <watch expression="code-&gt;dll" language="ObjectiveC" />
+        <watch expression="function" language="ObjectiveC" />
+        <watch expression="rb-&gt;cam.view.elements[3]" />
+        <watch expression="KeyCode - 'A'" language="ObjectiveC" />
+      </configuration>
+    </watches-manager>
+  </component>
+</project>

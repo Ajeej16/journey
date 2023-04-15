@@ -1,5 +1,6 @@
 
 #include "windows.h"
+#include "windowsx.h"
 
 #include "joy_utils.h"
 #include "joy_math.h"
@@ -104,6 +105,8 @@ Win32ProcessPendingMessages(HWND window, input_state *inputState)
 {
     MSG message = {0};
     
+    inputState->mouseOffset = vec2_init(0.0f, 0.0f);
+    
     for(;;)
     {
         BOOL gotMessage = FALSE;
@@ -166,6 +169,30 @@ Win32ProcessPendingMessages(HWND window, input_state *inputState)
                 
                 inputState->keyStates[key] = keyState;
                 
+            } break;
+            
+            case WM_MOUSEMOVE:
+            {
+                v2 oldMousePos = inputState->mousePos;
+                
+                POINT cur = {0};
+                cur.x = GET_X_LPARAM(lParam);
+                cur.y = GET_Y_LPARAM(lParam);
+                
+                ClientToScreen(window, &cur);
+                
+                inputState->mousePos.x = cur.x;
+                inputState->mousePos.y = cur.y;
+                
+                if(oldMousePos.x == FLT_MAX && oldMousePos.y == FLT_MAX)
+                    oldMousePos = inputState->mousePos;
+                
+                inputState->mouseOffset = vec2_sub(inputState->mousePos,
+                                                   oldMousePos);
+                
+                v2 c = vec2_sub(inputState->mousePos, inputState->mouseOffset);
+                
+                SetCursorPos(c.x, c.y);
             } break;
             
             default:
@@ -268,12 +295,18 @@ int WinMain(HINSTANCE instance, HINSTANCE prevInstance,
     v2 winPos = vec2_init(rect.left, rect.top);
     v2 winDim = vec2_init(rect.right-rect.left, rect.bottom-rect.top);
     
+    GetWindowRect(window, &rect);
+    
+    SetCursorPos(rect.left+400, rect.bottom-300);
+    
     render_buffer *rb = renderFunctions.initRenderer(renderDC, winPos, winDim);
+    
+    input_state *inputState = InitInputState();
+    inputState->mousePos.x = rect.left+400;
+    inputState->mousePos.y = rect.bottom-300;
     
     ShowWindow(window, SW_SHOW);
     UpdateWindow(window);
-    
-    input_state *inputState = InitInputState();
     
     appFunctions.initApp(&platFunctions, rb);
     

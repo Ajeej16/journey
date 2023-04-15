@@ -28,6 +28,7 @@ InitGLRenderer(gl_renderer *gl)
     gl->rb.cmds = NULL;
     
     gl->rb.shaderEntryCount = 0;
+    gl->rb.shaderCount = 0;
 }
 
 internal i32
@@ -102,6 +103,7 @@ LoadShaderCode(gl_renderer *gl, u8 *source)
         char *end = CstrFindNext(iter + 1, '#');
         u64 size = (u64)(end-iter);
         char *code = malloc(size+1);
+        memset(code, 0, size+1);
         memcpy(code, iter, size);
         code[size] = 0;
         
@@ -176,7 +178,7 @@ SubmitRenderBuffer(gl_renderer *gl)
     
     u64 max = GetStackCount(rb->cmds);
     render_cmd *cmd = rb->cmds;
-    for(u64 i = 0; i < max; i++)
+    for(u64 i = 0; i < max; i++, cmd++)
     {
         glDrawElements(cmd->primitiveType, cmd->indicesCount,
                        GL_UNSIGNED_SHORT,

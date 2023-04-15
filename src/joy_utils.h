@@ -7,6 +7,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <math.h>
+#include <float.h>
 
 #define internal static
 #define global static

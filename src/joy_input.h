@@ -109,6 +109,7 @@ InitInputState()
 {
     input_state *inputState = malloc(sizeof(input_state));
     memset(inputState, 0, sizeof(input_state));
+    inputState->mousePos = vec2_init(FLT_MAX, FLT_MAX);
     
     return inputState;
 }
