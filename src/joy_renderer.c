@@ -70,27 +70,27 @@ PushRenderCommand(render_buffer *rb, u32 textureID,
 }
 
 internal void
-QuadToVerts(v2 *verts, v2 pos, v2 dim)
+QuadToVerts(v3 *verts, v3 pos, v2 dim)
 {
     
     verts[0] = pos;
-    verts[1] = vec2_init(pos.x, pos.y+dim.y);
-    verts[2] = vec2_init(pos.x+dim.x, pos.y+dim.y);
-    verts[3] = vec2_init(pos.x+dim.x, pos.y);
+    verts[1] = vec3_init(pos.x, pos.y+dim.y, pos.z);
+    verts[2] = vec3_init(pos.x+dim.x, pos.y+dim.y, pos.z);
+    verts[3] = vec3_init(pos.x+dim.x, pos.y, pos.z);
 }
 
 internal void
-PushTexturedQuad(render_buffer *rb, v2 pos, v2 dim, v2 uv[4],
+PushTexturedQuad(render_buffer *rb, v3 pos, v2 dim, v2 uv[4],
                  u32 textureID, color tint)
 {
-    v2 quadVerts[4];
+    v3 quadVerts[4];
     QuadToVerts(quadVerts, pos, dim);
     
     PushRenderCommand(rb, textureID, 6, PRIMITIVE_TRIANGLES);
     
     u32 vertIdx = GetStackCount(rb->vertices);
     
-    v2 *verts = PushArrayOnStack(&rb->vertices, 4);
+    v3 *verts = PushArrayOnStack(&rb->vertices, 4);
     v2 *uvs = PushArrayOnStack(&rb->uvs, 4);
     color *colors = PushArrayOnStack(&rb->colors, 4);
     u16 *indices = PushArrayOnStack(&rb->indices, 6);
@@ -111,7 +111,7 @@ PushTexturedQuad(render_buffer *rb, v2 pos, v2 dim, v2 uv[4],
 }
 
 inline internal void
-PushQuad(render_buffer *rb, v2 pos, v2 dim, color tint)
+PushQuad(render_buffer *rb, v3 pos, v2 dim, color tint)
 {
     v2 uv[4] = { 
         vec2_init(0.0f, 1.0f), vec2_init(0.0f, 0.0f),
@@ -120,4 +120,65 @@ PushQuad(render_buffer *rb, v2 pos, v2 dim, color tint)
     
     // TODO(ajeej): pass white texture id
     PushTexturedQuad(rb, pos, dim, uv, 0, tint);
+}
+
+internal void
+PushCube(render_buffer *rb, v3 pos, v3 dim, color tint)
+{
+    v3 cubeVerts[8];
+    f32 halfX = dim.x*0.5f, halfY = dim.y*0.5f, halfZ = dim.z*0.5f;
+    cubeVerts[0] = vec3_init(pos.x-halfX, pos.y+halfY, pos.z+halfZ);
+    cubeVerts[1] = vec3_init(pos.x+halfX, pos.y+halfY, pos.z+halfZ);
+    cubeVerts[2] = vec3_init(pos.x+halfX, pos.y+halfY, pos.z-halfZ);
+    cubeVerts[3] = vec3_init(pos.x-halfX, pos.y+halfY, pos.z-halfZ);
+    cubeVerts[4] = vec3_init(pos.x-halfX, pos.y-halfY, pos.z+halfZ);
+    cubeVerts[5] = vec3_init(pos.x+halfX, pos.y-halfY, pos.z+halfZ);
+    cubeVerts[6] = vec3_init(pos.x+halfX, pos.y-halfY, pos.z-halfZ);
+    cubeVerts[7] = vec3_init(pos.x-halfX, pos.y-halfY, pos.z-halfZ);
+    
+    v2 uv[8] = { 
+        vec2_init(0.0f, 1.0f), vec2_init(0.0f, 0.0f),
+        vec2_init(1.0f, 0.0f), vec2_init(1.0f, 1.0f),
+        vec2_init(0.0f, 1.0f), vec2_init(0.0f, 0.0f),
+        vec2_init(1.0f, 0.0f), vec2_init(1.0f, 1.0f),
+    };
+    
+    PushRenderCommand(rb, 0, 36, PRIMITIVE_TRIANGLES);
+    
+    u32 vertIdx = GetStackCount(rb->vertices);
+    
+    v3 *verts = PushArrayOnStack(&rb->vertices, 8);
+    v2 *uvs = PushArrayOnStack(&rb->uvs, 8);
+    color *colors = PushArrayOnStack(&rb->colors, 8);
+    u16 *indices = PushArrayOnStack(&rb->indices, 36);
+    
+    for (u32 i = 0; i < 8; i++)
+    {
+        verts[i] = cubeVerts[i];
+        uvs[i] = uv[i];
+        colors[i] = tint;
+    }
+    
+    u32 sideStart = vertIdx;
+    for(u32 side_idx = 0; side_idx < 4; side_idx++, sideStart++) {
+        indices[side_idx*6] = sideStart;
+        indices[side_idx*6+1] = sideStart+4;
+        indices[side_idx*6+2] = (sideStart-vertIdx+5 == 8) ? vertIdx+4 : sideStart+5;
+        
+        indices[side_idx*6+3] = sideStart;
+        indices[side_idx*6+4] = (sideStart-vertIdx+5 == 8) ? vertIdx+4 : sideStart+5;
+        indices[side_idx*6+5] = (sideStart-vertIdx+5 == 8) ? vertIdx : sideStart+1;
+    }
+    
+    u32 baseStart = vertIdx;
+    for(u32 base_idx = 4; base_idx < 6; base_idx++, baseStart += 4) {
+        indices[base_idx*6] = baseStart;
+        indices[base_idx*6+1] = baseStart+1;
+        indices[base_idx*6+2] = baseStart+3;
+        
+        indices[base_idx*6+3] = baseStart+1;
+        indices[base_idx*6+4] = baseStart+2;
+        indices[base_idx*6+5] = baseStart+3;
+    }
+    
 }

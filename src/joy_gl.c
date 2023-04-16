@@ -157,7 +157,7 @@ SubmitRenderBuffer(gl_renderer *gl)
     gl->glBindBuffer(GL_ARRAY_BUFFER, gl->vboID[VBO_POSITION]);
     gl->glBufferData(GL_ARRAY_BUFFER, GetStackSize(rb->vertices),
                      (f32 *)rb->vertices, GL_DYNAMIC_DRAW);
-    gl->glVertexAttribPointer(0, 2, GL_FLOAT, 0, 0, 0);
+    gl->glVertexAttribPointer(0, 3, GL_FLOAT, 0, 0, 0);
     gl->glEnableVertexAttribArray(0);
     
     gl->glBindBuffer(GL_ARRAY_BUFFER, gl->vboID[VBO_UV]);

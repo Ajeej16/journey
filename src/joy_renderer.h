@@ -71,7 +71,7 @@ typedef struct render_cmd {
 } render_cmd;
 
 typedef struct render_buffer {
-    STACK(v2 *) vertices;
+    STACK(v3 *) vertices;
     STACK(v2 *) uvs;
     STACK(color *) colors;
     STACK(u16 *) indices;

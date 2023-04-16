@@ -189,10 +189,6 @@ Win32ProcessPendingMessages(HWND window, input_state *inputState)
                 
                 inputState->mouseOffset = vec2_sub(inputState->mousePos,
                                                    oldMousePos);
-                
-                v2 c = vec2_sub(inputState->mousePos, inputState->mouseOffset);
-                
-                SetCursorPos(c.x, c.y);
             } break;
             
             default:
