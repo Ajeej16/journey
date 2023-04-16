@@ -10,15 +10,26 @@
 
 #define __GetCurrentDirectory(len, buf) GetCurrentDirectory(len, buf)
 
+#define RENDER_DLL "glfw_joy_opengl.dll"
+#define RENDER_TEMP_DLL "glfw_joy_opengl_temp.dll"
+#define APP_DLL "joy_app.dll"
+#define APP_TEMP_DLL "joy_app_temp.dll"
+
 #elif __APPLE__
 #include "dlfcn.h"
 #include "unistd.h"
+#include "sys/syslimits.h"
 
-#define __LoadLibrary(fn) dlopen(fn)
+#define __LoadLibrary(fn) dlopen(fn, RTLD_LAZY)
 #define __UnloadLibrary(hnd) dlclose(hnd)
 #define __LoadFunc(hnd, fun) dlsym(hnd, fun)
 
 #define __GetCurrentDirectory(len, buf) getcwd(buf, len)
+
+#define RENDER_DLL "glfw_joy_opengl.dylib"
+#define RENDER_TEMP_DLL "glfw_joy_opengl_temp.dylib"
+#define APP_DLL "joy_app.dylib"
+#define APP_TEMP_DLL "joy_app_temp.dylib"
 
 #endif
 
@@ -132,8 +143,8 @@ int main(int argc, char *argv[])
             renderFunctionNames,
             ARRAY_COUNT(renderFunctionNames),
             buildDir,
-            "glfw_joy_opengl.dll",
-            "glfw_joy_opengl_temp.dll");
+            RENDER_DLL,
+            RENDER_TEMP_DLL);
 
     loaded_code appCode = {0};
     app_function_table appFunctions = {0};
@@ -141,8 +152,8 @@ int main(int argc, char *argv[])
             appFunctionNames,
             ARRAY_COUNT(appFunctionNames),
             buildDir,
-            "joy_app.dll",
-            "joy_app_temp.dll");
+            APP_DLL,
+            APP_TEMP_DLL);
 
     LoadCode(&renderCode, buildDir);
     LoadCode(&appCode, buildDir);

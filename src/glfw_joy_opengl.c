@@ -1,14 +1,13 @@
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
 
+#include "glcorearb.h"
+
 #ifdef _WIN32
 #include "GL/gl.h"
-#elif
-#include "Opengl/gl.h"
+#elif __APPLE__
+#include "Opengl/gl3.h"
 #endif
-
-
-#include "glcorearb.h"
 
 #include "joy_utils.h"
 #include "joy_math.h"
