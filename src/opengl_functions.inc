@@ -53,5 +53,7 @@ GLProc(UNIFORM3IV, glUniform3iv)
 GLProc(UNIFORM4IV, glUniform4iv)
 GLProc(UNIFORMMATRIX4FV, glUniformMatrix4fv)
 GLProc(DEBUGMESSAGECALLBACK, glDebugMessageCallback)
+GLProc(ACTIVETEXTURE, glActiveTexture)
+
 
 #undef GLProc

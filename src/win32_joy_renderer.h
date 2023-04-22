@@ -5,10 +5,10 @@
 #define INIT_RENDERER(name) render_buffer *name(HDC dc, v2 winPos, v2 winDim)
 typedef INIT_RENDERER(init_renderer);
 
-#define START_FRAME(name) void name(render_buffer *rb)
+#define START_FRAME(name) void name(platform_functions *plat_funcs, render_buffer *rb, asset_manager_t *assets)
 typedef START_FRAME(start_frame);
 
-#define END_FRAME(name) void name(render_buffer *rb)
+#define END_FRAME(name) void name(render_buffer *rb, asset_manager_t *assets)
 typedef END_FRAME(end_frame);
 
 typedef struct render_function_table {

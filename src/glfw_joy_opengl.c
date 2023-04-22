@@ -1,3 +1,4 @@
+
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
 
@@ -22,7 +23,7 @@ internal void
 GLFWInitOpengl(GLFWwindow *window, gl_renderer *gl)
 {
     glfwMakeContextCurrent(window);
-
+    
     // Load Opengl Functions
     {
         gl->glBindAttribLocation = (PFNGLBINDATTRIBLOCATIONPROC)glfwGetProcAddress("glBindAttribLocation");
@@ -79,17 +80,17 @@ GLFWInitOpengl(GLFWwindow *window, gl_renderer *gl)
         gl->glUniform4iv = (PFNGLUNIFORM4IVPROC)glfwGetProcAddress("glUniform4iv");
         gl->glUniformMatrix4fv = (PFNGLUNIFORMMATRIX4FVPROC)glfwGetProcAddress("glUniformMatrix4fv");
     }
-
+    
     glfwSwapInterval(1);
 }
 
 INIT_RENDERER(InitRenderer)
 {
     gl_renderer *gl = malloc(sizeof(gl_renderer));
-
+    
     GLFWInitOpengl(window, gl);
     InitGLRenderer(gl);
-
+    
     u32 w = 0, h = 0, x = 0, y = 0;
     glfwGetWindowSize(window, &w, &h);;
     glViewport(0, 0, w, h);
@@ -100,22 +101,22 @@ INIT_RENDERER(InitRenderer)
     //glCullFace(GL_BACK);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glDepthFunc(GL_LEQUAL);
-
+    
     return (render_buffer *)gl;
 }
 
 START_FRAME(StartFrame)
 {
     gl_renderer *gl = (gl_renderer *)rb;
-
+    
     u32 w = 0, h = 0;
     glfwGetFramebufferSize(window, &w, &h);
-
+    
     glViewport(0, 0, w, h);
-
+    
     glClearColor(255, 0, 0, 255);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
+    
     for(u32 entry = 0;
         entry < rb->shaderEntryCount;
         entry++)
@@ -125,31 +126,31 @@ START_FRAME(StartFrame)
         LoadShader(gl, newShader, shaderEntry->code);
         free(shaderEntry->code);
     }
-
+    
     rb->shaderEntryCount = 0;
-
+    
     gl->glUseProgram(rb->shaders[0].id);
-
+    
     SetUniform(gl, rb->shaders[0].locs[SHADER_LOC_MATRIX_VIEW],
-            rb->cam.view.elements, UNIFORM_MATRIX, 1);
+               rb->cam.view.elements, UNIFORM_MATRIX, 1);
     SetUniform(gl, rb->shaders[0].locs[SHADER_LOC_MATRIX_PROJECTION],
-            rb->cam.projection.elements, UNIFORM_MATRIX, 1);
+               rb->cam.projection.elements, UNIFORM_MATRIX, 1);
 }
 
 END_FRAME(EndFrame)
 {
     gl_renderer *gl = (gl_renderer *)rb;
-
+    
     SubmitRenderBuffer(gl);
-
+    
     ClearStack(rb->vertices);
     ClearStack(rb->uvs);
     ClearStack(rb->colors);
     ClearStack(rb->indices);
     ClearStack(rb->cmds);
-
+    
     gl->glUseProgram(0);
-
+    
     glFlush();
     glfwSwapBuffers(window);
 }

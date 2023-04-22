@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <float.h>
+#include <string.h>
 
 #define internal static
 #define global static
@@ -82,7 +83,115 @@ internal char *
 CstrFindNext(char *src, char c)
 {
     while(*src != '\0' && *src != c) src++;
+    
+    
     return src;
+}
+
+inline internal u32
+is_letter(char c)
+{
+    return (c >= 'a' && c <='z') || (c >= 'A' && c <= 'Z');
+}
+
+inline internal u32
+is_number(char c)
+{
+    return (c >= '0' && c <= '9');
+}
+
+inline internal u32
+is_chars(char c ,char *targets, u32 len)
+{
+    for(u32 t_idx = 0; t_idx < len; t_idx++) {
+        if(c == targets[t_idx])
+            return 1;
+    }
+    
+    return 0;
+}
+
+inline internal char *
+seek_char(char *c, char target)
+{
+    while(*c && *c != target) c++;
+    return c;
+}
+
+inline internal char *
+seek_chars(char *c, char *targets, u32 len)
+{
+    while(*c && !is_chars(*c, targets, len)) c++;
+    return c;
+}
+
+inline internal char *
+skip_spaces(char *c)
+{
+    while(*c == ' ' || *c == '\t') c++;
+    return c;
+}
+
+inline internal char *
+skip_spaces_and_cr(char *c)
+{
+    while(*c == ' ' || *c == '\t' || *c == '\r') c++;
+    return c;
+}
+
+inline internal char *
+seek_numerical(char *c)
+{
+    while(*c && !is_number(*c) && *c != '-' && *c != '+') c++;
+    return c;
+}
+
+inline internal char *
+seek_numerical_term(char *c, char *terminators, u32 len)
+{
+    while(*c && !is_number(*c) && *c != '-' && *c != '+' &&
+          is_chars(*c, terminators, len)) c++;
+    return c;
+}
+
+inline internal char *
+seek_letter(char *c)
+{
+    while(*c && !is_letter(*c)) c++;
+    return c;
+}
+
+inline internal char *
+create_cstr(char *start, char *end)
+{
+    char *cstr = NULL;
+    u32 size = end-start;
+    cstr = malloc(size+1);
+    memcpy(cstr, start, size);
+    cstr[size] = 0;
+    
+    return cstr;
+}
+
+inline internal char *
+create_cstr_len(char *start, u64 len)
+{
+    char *cstr = NULL;
+    cstr = malloc(len+1);
+    memcpy(cstr, start, len);
+    cstr[len] = 0;
+    
+    return cstr;
+}
+
+inline internal char *
+get_dir(char *path)
+{
+    char *dir = NULL;
+    u64 end_idx = CstrFindLast(path, '\\');
+    dir = create_cstr_len(path, end_idx);
+    
+    return dir;
 }
 
 typedef struct stack_header {
@@ -145,6 +254,12 @@ __FitStack(void **bpp, u32 count, u32 elSize)
         if(count > newCap)
             newCap = count;
         
+        if(newCap > 2000000000)
+        {
+            int x = 0;
+            x++;
+        }
+        
         if(!__ResizeStack(&bp, newCap, elSize)) return NULL;
     }
     
@@ -171,5 +286,8 @@ __PushOnStack(void **bpp, u32 count, u32 elSize)
 #define PopArrayFromStack(bp, c) GetStackHeader(bp)->count -= c;
 
 #define STACK(s) s
+
+#include "joy_hash.h"
+#include "joy_hash.c"
 
 #endif //JOY_UTILS_H

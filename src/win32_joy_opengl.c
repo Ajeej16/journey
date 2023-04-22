@@ -21,10 +21,15 @@ global PFNGL##type##PROC name;
 
 #include "joy_math.h"
 #include "joy_renderer.h"
+#include "joy_input.h"
 #include "joy_gl.h"
+#include "joy_assets.h"
+#include "joy_platform.h"
 #include "win32_joy_renderer.h"
 
-//#include "joy_renderer.c"
+#include "joy_renderer.c"
+#include "joy_assets.c"
+#include "joy_obj_loader.c"
 #include "joy_gl.c"
 
 #define CstrEqualLength(s0, s1, l) (CstrCmpLength((s0), (s1), (l)) == 0)
@@ -235,6 +240,7 @@ INIT_RENDERER(InitRenderer)
     glCullFace(GL_BACK);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glDepthFunc(GL_LEQUAL);
+    //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
     
     return (render_buffer *)gl;
 }
@@ -247,22 +253,54 @@ START_FRAME(StartFrame)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     
     for(u32 entry = 0;
-        entry < rb->shaderEntryCount;
+        entry < GetStackCount(assets->entries);
         entry++)
     {
-        shader_entry *shaderEntry = rb->shaderEntries + entry;
-        shader *newShader = rb->shaders + rb->shaderCount++;
-        LoadShader(gl, newShader, shaderEntry->code);
-        free(shaderEntry->code);
+        asset_entry_t *asset_entry = assets->entries + entry;
+        
+        switch(asset_entry->type)
+        {
+            case ASSET_MODEL: {
+                model_t *model = PushOnStack(&assets->models);
+                asset_model_t *model_data = asset_entry->data;
+                
+                // TODO(ajeej): idk if i want the material to have the shader id
+                //              would make more sense if the model had it
+                *model = parse_obj(plat_funcs, assets, model_data->path, model_data->data,
+                                   assets->shaders+model_data->shader_id);
+                
+                free(model_data->path);
+                free(asset_entry->data);
+            } break;
+            
+            case ASSET_TEXTURE: {
+                u64 *tex_id = PushOnStack(&assets->tex_ids);
+                asset_texture_t *tex_data = asset_entry->data;
+                
+                image_t image = LoadImageFromMemory(tex_data->data, tex_data->size);
+                *tex_id = LoadTextureFromImage(gl, image).id;
+                
+                UnloadImage(image);
+                free(asset_entry->data);
+            } break;
+            
+            case ASSET_SHADER: {
+                shader *new_shader = PushOnStack(&assets->shaders);
+                
+                LoadShader(gl, new_shader, asset_entry->data);
+                
+                free(asset_entry->data);
+            } break;
+        }
     }
     
-    rb->shaderEntryCount = 0;
+    ClearStack(assets->entries);
     
-    gl->glUseProgram(rb->shaders[0].id);
+    gl->glUseProgram(assets->shaders[0].id);
     
-    SetUniform(gl, rb->shaders[0].locs[SHADER_LOC_MATRIX_VIEW],
+    SetUniform(gl, assets->shaders[0].locs[SHADER_LOC_MATRIX_VIEW],
                rb->cam.view.elements, UNIFORM_MATRIX, 1);
-    SetUniform(gl, rb->shaders[0].locs[SHADER_LOC_MATRIX_PROJECTION],
+    SetUniform(gl, assets->shaders[0].locs[SHADER_LOC_MATRIX_PROJECTION],
                rb->cam.projection.elements, UNIFORM_MATRIX, 1);
 }
 
@@ -270,7 +308,7 @@ END_FRAME(EndFrame)
 {
     gl_renderer *gl = (gl_renderer *)rb;
     
-    SubmitRenderBuffer(gl);
+    SubmitRenderBuffer(gl, assets);
     
     ClearStack(rb->vertices);
     ClearStack(rb->uvs);

@@ -25,10 +25,12 @@ void main() {
 in vec4 frag_color;
 in vec2 frag_uv;
 
+uniform sampler2D diffuse_map;
+
 out vec4 out_color;
 
 void main() {
     
-    out_color = frag_color;
+    out_color = texture(diffuse_map, frag_uv);
     
 }

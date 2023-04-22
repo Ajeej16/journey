@@ -26,9 +26,6 @@ InitGLRenderer(gl_renderer *gl)
     gl->rb.colors = NULL;
     gl->rb.indices = NULL;
     gl->rb.cmds = NULL;
-    
-    gl->rb.shaderEntryCount = 0;
-    gl->rb.shaderCount = 0;
 }
 
 internal i32
@@ -140,15 +137,179 @@ LoadShader(gl_renderer *gl, shader *outShader, u8 *code)
     
     if(outShader->id > 0)
     {
+        // TODO(ajeej): put names in array and loop
         outShader->locs[SHADER_LOC_MATRIX_VIEW] =
             GetUniformLocation(gl, outShader->id, SHADER_MATRIX_VIEW_NAME);
         outShader->locs[SHADER_LOC_MATRIX_PROJECTION] =
             GetUniformLocation(gl, outShader->id, SHADER_MATRIX_PROJECTION_NAME);
+        outShader->locs[SHADER_LOC_SAMPLER2D_DIFFUSE] =
+            GetUniformLocation(gl, outShader->id, SHADER_SAMPLER2D_DIFFUSE_NAME);
+        outShader->locs[SHADER_LOC_SAMPLER2D_SPECULAR] =
+            GetUniformLocation(gl, outShader->id, SHADER_SAMPLER2D_SPECULAR_NAME);
+        outShader->locs[SHADER_LOC_SAMPLER2D_NORMAL] =
+            GetUniformLocation(gl, outShader->id, SHADER_SAMPLER2D_NORMAL_NAME);
+        outShader->locs[SHADER_LOC_SAMPLER2D_OCCULSION] =
+            GetUniformLocation(gl, outShader->id, SHADER_SAMPLER2D_OCCULSION_NAME);
     }
 }
 
 internal void
-SubmitRenderBuffer(gl_renderer *gl)
+GetGLTextureFormat(u32 format, u32 *gl_internal_format,
+                   u32 *gl_format, u32 *gl_type)
+{
+    switch(format)
+    {
+        case PIXELFORMAT_UNCOMPRESSED_GRAYSCALE: {
+            *gl_internal_format = GL_R8;
+            *gl_format = GL_RED;
+            *gl_type = GL_UNSIGNED_BYTE;
+        } break;
+        case PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA: {
+            *gl_internal_format = GL_RG8;
+            *gl_format = GL_RG;
+            *gl_type = GL_UNSIGNED_BYTE;
+        } break;
+        case PIXELFORMAT_UNCOMPRESSED_R5G6B5: {
+            *gl_internal_format = GL_RGB565;
+            *gl_format = GL_RGB;
+            *gl_type = GL_UNSIGNED_SHORT_5_6_5;
+        } break;
+        case PIXELFORMAT_UNCOMPRESSED_R8G8B8: {
+            *gl_internal_format = GL_RGB8;
+            *gl_format = GL_RGB;
+            *gl_type = GL_UNSIGNED_BYTE;
+        } break;
+        case PIXELFORMAT_UNCOMPRESSED_R5G5B5A1: {
+            *gl_internal_format = GL_RGB5_A1;
+            *gl_format = GL_RGBA;
+            *gl_type = GL_UNSIGNED_SHORT_5_5_5_1;
+        } break;
+        case PIXELFORMAT_UNCOMPRESSED_R4G4B4A4: {
+            *gl_internal_format = GL_RGBA4;
+            *gl_format = GL_RGBA;
+            *gl_type = GL_UNSIGNED_SHORT_4_4_4_4;
+        } break;
+        case PIXELFORMAT_UNCOMPRESSED_R8G8B8A8: {
+            *gl_internal_format = GL_RGBA8;
+            *gl_format = GL_RGBA;
+            *gl_type = GL_UNSIGNED_BYTE;
+        } break;
+        case PIXELFORMAT_UNCOMPRESSED_R32: {
+            *gl_internal_format = GL_R32F;
+            *gl_format = GL_RED;
+            *gl_type = GL_FLOAT;
+        } break;
+        case PIXELFORMAT_UNCOMPRESSED_R32G32B32: {
+            *gl_internal_format = GL_RGB32F;
+            *gl_format = GL_RGB;
+            *gl_type = GL_FLOAT;
+        } break;
+        case PIXELFORMAT_UNCOMPRESSED_R32G32B32A32: {
+            *gl_internal_format = GL_RGBA32F;
+            *gl_format = GL_RGBA;
+            *gl_type = GL_FLOAT;
+        } break;
+    }
+}
+
+internal texture_t
+LoadTextureFromImage(gl_renderer *gl, image_t image)
+{
+    texture_t texture = image;
+    u64 id = 0;
+    
+    if(texture.width != 0 && texture.height != 0)
+    {
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        
+        glGenTextures(1, (GLuint *)&id);
+        glBindTexture(GL_TEXTURE_2D, id);
+        
+        u32 mip_width = texture.width;
+        u32 mip_height = texture.height;
+        u32 mip_offset = 0;
+        
+        for(u32 i = 0; i < texture.mipmaps; i++)
+        {
+            u32 mip_size = GetPixelDataSize(mip_width, mip_height, texture.format);
+            u32 gl_internal_format, gl_format, gl_type;
+            GetGLTextureFormat(texture.format, &gl_internal_format,
+                               &gl_format, &gl_type);
+            
+            if(texture.format < PIXELFORMAT_COMPRESSED_DXT1_RGB) {
+                glTexImage2D(GL_TEXTURE_2D, i, gl_internal_format,
+                             mip_width, mip_height, 0, gl_format,
+                             gl_type, (u8 *)texture.data + mip_offset);
+            }
+            
+            if(texture.format == PIXELFORMAT_UNCOMPRESSED_GRAYSCALE) {
+                GLint swizzle_mask[] = { GL_RED, GL_RED, GL_RED, GL_ONE };
+                glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA,
+                                 swizzle_mask);
+            }
+            else if(texture.format == PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA)
+            {
+                GLint swizzle_mask[] = { GL_RED, GL_RED, GL_RED, GL_GREEN };
+                glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, 
+                                 swizzle_mask);
+            }
+            
+            mip_width *= 0.5f;
+            mip_height *= 0.5f;
+            mip_offset += mip_size;
+            
+            if(mip_width < 1) mip_width = 1;
+            if(mip_height < 1) mip_height = 1;
+        }
+        
+        
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        
+        if(texture.mipmaps > 1)
+        {
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        }
+        
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+    else
+        ASSERT(0);
+    
+    
+    texture.id = id;
+    
+    return texture;
+}
+
+internal texture_t
+LoadTexure(gl_renderer *gl, platform_read_file *read_file, char *filename)
+{
+    texture_t texture = {0};
+    
+    image_t image = LoadImageFromFile(read_file, filename);
+    
+    if(image.data != NULL) {
+        texture = LoadTextureFromImage(gl, image);
+        UnloadImage(image);
+    }
+    
+    return texture;
+}
+
+internal texture_t
+UnloadTexture(texture_t texture)
+{
+    glDeleteTextures(1, (GLuint *)&texture.id);
+}
+
+internal void
+SubmitRenderBuffer(gl_renderer *gl, asset_manager_t *assets)
 {
     render_buffer *rb = (render_buffer *)gl;
     
@@ -166,11 +327,11 @@ SubmitRenderBuffer(gl_renderer *gl)
     gl->glVertexAttribPointer(1, 2, GL_FLOAT, 0, 0, 0);
     gl->glEnableVertexAttribArray(1);
     
-    gl->glBindBuffer(GL_ARRAY_BUFFER, gl->vboID[VBO_COLOR]);
+    /*gl->glBindBuffer(GL_ARRAY_BUFFER, gl->vboID[VBO_COLOR]);
     gl->glBufferData(GL_ARRAY_BUFFER, GetStackSize(rb->colors),
                      (u8 *)rb->colors, GL_DYNAMIC_DRAW);
     gl->glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE, 0, 0);
-    gl->glEnableVertexAttribArray(2);
+    gl->glEnableVertexAttribArray(2);*/
     
     gl->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gl->vboID[VBO_INDEX]);
     gl->glBufferData(GL_ELEMENT_ARRAY_BUFFER, GetStackSize(rb->indices),
@@ -178,11 +339,26 @@ SubmitRenderBuffer(gl_renderer *gl)
     
     u64 max = GetStackCount(rb->cmds);
     render_cmd *cmd = rb->cmds;
+    
+    // TODO(ajeej):temp
+    u32 zero = 0;
     for(u64 i = 0; i < max; i++, cmd++)
     {
+        material_t *material = assets->materials+cmd->materialID;
+        
+        gl->glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D,
+                      assets->tex_ids[material->maps[MATERIAL_MAP_DIFFUSE].tex_id]);
+        
+        SetUniform(gl, material->shad.locs[SHADER_LOC_SAMPLER2D_DIFFUSE],
+                   (void *)&zero, UNIFORM_SAMPLER2D, 1);
+        
         glDrawElements(cmd->primitiveType, cmd->indicesCount,
                        GL_UNSIGNED_SHORT,
                        (void *)(cmd->indicesIdx*sizeof(u16)));
+        
+        gl->glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
     
     gl->glBindVertexArray(0);

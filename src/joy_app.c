@@ -3,8 +3,10 @@
 #include "joy_math.h"
 #include "joy_renderer.h"
 #include "joy_input.h"
+#include "joy_assets.h"
 #include "joy_platform.h"
 #include "joy_renderer.c"
+#include "joy_assets.c"
 
 global float speed = 0.05f;
 global float mouse_sen = 0.5f;
@@ -12,11 +14,17 @@ global float mouse_sen = 0.5f;
 global float yaw = -90.0f;
 global float pitch = 0.0f;
 
+global u64 bag_id = 0;
+global u64 shader_id = 0;
+
 INIT_APP(InitApp)
 {
     // TODO(ajeej): replace hard coded widths and heights
     InitCamera(&rb->cam, vec3_init(0.0f, 0.0f, 10.0f), 0.5f, 45.0f, 800, 600);
-    AddShader(platFunctions->readFile, rb, "W:\\journey\\shaders\\test.glsl");
+    shader_id =AddShader(platFunctions, assets, "W:\\journey\\shaders\\test.glsl");
+    
+    bag_id = AddModel(platFunctions, assets, "W:\\journey\\models\\backpack\\backpack.obj",
+                      shader_id);
 }
 
 UPDATE_AND_RENDER(UpdateAndRender)
@@ -85,7 +93,8 @@ UPDATE_AND_RENDER(UpdateAndRender)
     
     UpdateCamera(&rb->cam);
     
-    PushQuad(rb, vec3_init(-0.5f, -0.5f, 0.0f), vec2_init(0.5f, 0.5f), COLOR(0, 255, 0, 255));
+    //PushQuad(rb, vec3_init(-0.5f, -0.5f, 0.0f), vec2_init(0.5f, 0.5f), COLOR(0, 255, 0, 255));
     
-    PushCube(rb, vec3_init(0.0f, 0.0f, 0.0f), vec3_init(1.0f, 1.0f, 1.0f), COLOR(0, 0, 255, 255));
+    /*PushCube(rb, vec3_init(3.0f, 0.0f, 0.0f), vec3_init(1.0f, 1.0f, 1.0f), COLOR(0, 0, 255, 255));*/
+    PushModel(rb, assets, bag_id);
 }

@@ -38,30 +38,115 @@ UpdateCamera(camera *c)
 }
 
 internal u32
-AddShader(platform_read_file *readFile, render_buffer *rb, char *path)
+GetPixelDataSize(u32 width, u32 height, u32 format)
 {
-    u32 id = rb->shaderCount + rb->shaderEntryCount;
+    u32 data_size = 0;
+    u32 bytes_per_pixel = 0;
     
-    u8 *code = 0;
-    readFile(path, &code, NULL);
+    switch(format)
+    {
+        case PIXELFORMAT_UNCOMPRESSED_GRAYSCALE: bytes_per_pixel = 8; break;
+        case PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA:
+        case PIXELFORMAT_UNCOMPRESSED_R5G6B5:
+        case PIXELFORMAT_UNCOMPRESSED_R5G5B5A1:
+        case PIXELFORMAT_UNCOMPRESSED_R4G4B4A4: bytes_per_pixel = 16; break;
+        case PIXELFORMAT_UNCOMPRESSED_R8G8B8A8:
+        case PIXELFORMAT_UNCOMPRESSED_R32: bytes_per_pixel = 32; break;
+        case PIXELFORMAT_UNCOMPRESSED_R8G8B8: bytes_per_pixel = 24; break;
+        case PIXELFORMAT_UNCOMPRESSED_R32G32B32: bytes_per_pixel = 96; break;
+        case PIXELFORMAT_UNCOMPRESSED_R32G32B32A32: bytes_per_pixel = 128; break;
+        case PIXELFORMAT_COMPRESSED_DXT1_RGB:
+        case PIXELFORMAT_COMPRESSED_DXT1_RGBA:
+        case PIXELFORMAT_COMPRESSED_ETC1_RGB:
+        case PIXELFORMAT_COMPRESSED_ETC2_RGB:
+        case PIXELFORMAT_COMPRESSED_PVRT_RGB:
+        case PIXELFORMAT_COMPRESSED_PVRT_RGBA: bytes_per_pixel = 4; break;
+        case PIXELFORMAT_COMPRESSED_DXT3_RGBA:
+        case PIXELFORMAT_COMPRESSED_DXT5_RGBA:
+        case PIXELFORMAT_COMPRESSED_ETC2_EAC_RGBA:
+        case PIXELFORMAT_COMPRESSED_ASTC_4x4_RGBA: bytes_per_pixel = 8; break;
+        case PIXELFORMAT_COMPRESSED_ASTC_8x8_RGBA: bytes_per_pixel = 2; break;
+        default: ASSERT(0); break;
+    }
     
-    shader_entry *entry = rb->shaderEntries + rb->shaderEntryCount++;
-    entry->code = code;
+    data_size = width*height*bytes_per_pixel/8;
     
-    return id;
+    if(width < 4 && height < 4)
+    {
+        if(format >= PIXELFORMAT_COMPRESSED_DXT1_RGB && format < PIXELFORMAT_COMPRESSED_DXT3_RGBA)
+            data_size = 8;
+        else if(format >= PIXELFORMAT_COMPRESSED_DXT3_RGBA && format < PIXELFORMAT_COMPRESSED_ASTC_8x8_RGBA)
+            data_size = 16;
+    }
+    
+    return data_size;
+}
+
+internal image_t
+LoadImageFromMemory(u8 *data, u64 size)
+{
+    image_t image = {0};
+    
+    u32 comp = 0;
+    image.data = stbi_load_from_memory(data, size,
+                                       &image.width, &image.height,
+                                       &comp, 0);
+    
+    ASSERT(image.data);
+    image.mipmaps = 1;
+    if(comp == 1) image.format = PIXELFORMAT_UNCOMPRESSED_GRAYSCALE;
+    else if(comp == 2) image.format = PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA;
+    else if(comp == 3) image.format = PIXELFORMAT_UNCOMPRESSED_R8G8B8;
+    else if(comp == 4) image.format = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8;
+    else ASSERT(0);
+    
+    return image;
+}
+
+internal image_t
+LoadImageFromFile(platform_read_file *read_file, char *filename)
+{
+    image_t image = {0};
+    
+    u64 size = 0;
+    u8 *data = 0;
+    read_file(filename, (void **)&data, &size);
+    
+    if(!data)
+        ASSERT(0);
+    image = LoadImageFromMemory(data, size);
+}
+
+internal void
+UnloadImage(image_t image)
+{
+    stbi_image_free(image.data);
+}
+
+internal material_t
+load_default_material(shader *shad)
+{
+    material_t material = {0};
+    
+    material.shad = *shad;
+    
+    material.maps[MATERIAL_MAP_DIFFUSE].tex_id = (u32)(-1);
+    material.maps[MATERIAL_MAP_DIFFUSE].color = COLOR(255, 255, 255, 255);
+    material.maps[MATERIAL_MAP_SPECULAR].color = COLOR(255, 255, 255, 255);
+    return material;
 }
 
 internal render_cmd *
-PushRenderCommand(render_buffer *rb, u32 textureID, 
+PushRenderCommand(render_buffer *rb, u32 materialID, 
                   u32 indicesCount, u32 primitiveType)
 {
     render_cmd *rc = GetStackLast(rb->cmds);
-    if(!rc || rc->primitiveType != primitiveType || rc->textureID != textureID)
+    if(!rc || rc->primitiveType != primitiveType || rc->materialID != materialID)
     {
         rc = PushOnStack(&rb->cmds);
         rc->indicesIdx = GetStackCount(rb->indices);
         rc->indicesCount = 0;
-        rc->textureID = textureID;
+        rc->materialID = materialID;
         rc->primitiveType = primitiveType;
     }
     
@@ -79,14 +164,16 @@ QuadToVerts(v3 *verts, v3 pos, v2 dim)
     verts[3] = vec3_init(pos.x+dim.x, pos.y, pos.z);
 }
 
+
+// TODO(ajeej): have work with material id
 internal void
 PushTexturedQuad(render_buffer *rb, v3 pos, v2 dim, v2 uv[4],
-                 u32 textureID, color tint)
+                 u32 materialID, color tint)
 {
     v3 quadVerts[4];
     QuadToVerts(quadVerts, pos, dim);
     
-    PushRenderCommand(rb, textureID, 6, PRIMITIVE_TRIANGLES);
+    PushRenderCommand(rb, materialID, 6, PRIMITIVE_TRIANGLES);
     
     u32 vertIdx = GetStackCount(rb->vertices);
     
@@ -122,7 +209,7 @@ PushQuad(render_buffer *rb, v3 pos, v2 dim, color tint)
     PushTexturedQuad(rb, pos, dim, uv, 0, tint);
 }
 
-internal void
+/*internal void
 PushCube(render_buffer *rb, v3 pos, v3 dim, color tint)
 {
     v3 cubeVerts[8];
@@ -181,4 +268,31 @@ PushCube(render_buffer *rb, v3 pos, v3 dim, color tint)
         indices[base_idx*6+5] = baseStart+3;
     }
     
+}*/
+
+internal void
+PushModel(render_buffer *rb, asset_manager_t *assets, u64 model_id)
+{
+    model_t *model = assets->models+model_id;
+    u32 vert_idx = GetStackCount(rb->vertices);
+    
+    v3 *verts = PushArrayOnStack(&rb->vertices, GetStackCount(model->verts));
+    memcpy(verts, model->verts, GetStackCount(model->verts)*sizeof(*verts));
+    v2 *tex_coords = PushArrayOnStack(&rb->uvs, GetStackCount(model->tex_coords));
+    memcpy(tex_coords, model->tex_coords, GetStackCount(model->tex_coords)*sizeof(*tex_coords));
+    
+    mesh_t *mesh = NULL;
+    u32 idx_count = 0;
+    u16 *indices = NULL;
+    for(u32 m_idx = 0; m_idx < GetStackCount(model->meshes); m_idx++)
+    {
+        mesh = model->meshes+m_idx;
+        
+        idx_count = GetStackCount(mesh->indices);
+        PushRenderCommand(rb, mesh->material_id, idx_count, PRIMITIVE_TRIANGLES);
+        
+        indices = PushArrayOnStack(&rb->indices, idx_count);
+        for(u32 i_idx = 0; i_idx < idx_count; i_idx++)
+            indices[i_idx] = vert_idx + mesh->indices[i_idx];
+    }
 }

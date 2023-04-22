@@ -6,6 +6,7 @@
 #include "joy_math.h"
 #include "joy_renderer.h"
 #include "joy_input.h"
+#include "joy_assets.h"
 #include "joy_platform.h"
 #include "win32_joy_renderer.h"
 
@@ -98,7 +99,68 @@ PLATFORM_READ_FILE(Win32ReadFile)
     }
 }
 
+internal
+PLATFORM_OPEN_FILE(Win32OpenFile)
+{
+    DWORD desiredAccess = GENERIC_READ | GENERIC_WRITE;
+    DWORD shareMode = 0;
+    SECURITY_ATTRIBUTES securityAttribs = {
+        (DWORD)sizeof(securityAttribs),
+        0, 0,
+    };
+    DWORD creationDisposition = OPEN_EXISTING;
+    DWORD flagsAndAttribs = 0;
+    HANDLE templateFile = 0;
+    LARGE_INTEGER sizeInt = {0};
+    
+    file->handle = CreateFileA(path, desiredAccess,
+                               shareMode, &securityAttribs,
+                               creationDisposition, flagsAndAttribs,
+                               templateFile);
+    if(file != INVALID_HANDLE_VALUE)
+        GetFileSizeEx(file->handle, &sizeInt);
+    
+    file->size = sizeInt.QuadPart+1;
+}
+
+internal
+PLATFORM_READ_FILE_OF_SIZE(Win32ReadFileOfSize)
+{
+    if(file->handle == INVALID_HANDLE_VALUE)
+        return;
+    
+    void *data = *outData;
+    
+    u8 *ptr = (u8 *)data;
+    u8 *opl = ptr + size-1;
+    
+    for(;;)
+    {
+        u64 unread = (u64)(opl-ptr);
+        DWORD toRead = (DWORD)MIN(unread, (u32)-1);
+        DWORD didRead = 0;
+        if(!ReadFile(file->handle, ptr, toRead, &didRead, 0))
+            break;
+        ptr += didRead;
+        if(ptr >= opl)
+            break;
+    }
+    
+    ((u8 *)data)[size-1] = 0;
+    *outData = data;
+}
+
+internal
+PLATFORM_CLOSE_FILE(Win32CloseFile)
+{
+    if(file.handle == INVALID_HANDLE_VALUE)
+        return;
+    
+    CloseHandle(file.handle);
+}
+
 #include "joy_load.c"
+#include "joy_assets.c"
 
 internal void
 Win32ProcessPendingMessages(HWND window, input_state *inputState)
@@ -285,6 +347,9 @@ int WinMain(HINSTANCE instance, HINSTANCE prevInstance,
     
     platform_functions platFunctions = {0};
     platFunctions.readFile = Win32ReadFile;
+    platFunctions.openFile = Win32OpenFile;
+    platFunctions.readFileOfSize = Win32ReadFileOfSize;
+    platFunctions.closeFile = Win32CloseFile;
     
     RECT rect = {0};
     GetClientRect(window, &rect);
@@ -301,20 +366,23 @@ int WinMain(HINSTANCE instance, HINSTANCE prevInstance,
     inputState->mousePos.x = rect.left+400;
     inputState->mousePos.y = rect.bottom-300;
     
+    asset_manager_t assets = {0};
+    InitAssetManager(&assets);
+    
     ShowWindow(window, SW_SHOW);
     UpdateWindow(window);
     
-    appFunctions.initApp(&platFunctions, rb);
+    appFunctions.initApp(&platFunctions, rb, &assets);
     
     while(running)
     {
         Win32ProcessPendingMessages(window, inputState);
         
-        renderFunctions.startFrame(rb);
+        renderFunctions.startFrame(&platFunctions, rb, &assets);
         
-        appFunctions.updateAndRender(rb, inputState);
+        appFunctions.updateAndRender(rb, inputState, &assets);
         
-        renderFunctions.endFrame(rb);
+        renderFunctions.endFrame(rb, &assets);
     }
     
     return 0;
