@@ -10,7 +10,7 @@ set platform_linker_flags=%linker_flags% winmm.lib
 if not exist build mkdir build 
 pushd build
 
-call vcvarsall.bat
+call vcvarsall.bat x64
 
 cl %compiler_flags% %includes% ..\src\joy_app.c -LD /link -EXPORT:InitApp -EXPORT:UpdateAndRender /out:journey_app.dll
 
