@@ -4,7 +4,10 @@
 
 
 typedef struct hash_entry_t {
-    char *key;
+    union {
+        char *key;
+        u64 id;
+    };
     void *value;
 } hash_entry_t;
 
@@ -14,6 +17,7 @@ typedef struct hash_table_t {
     u64 size;
     void *values;
     u32 value_size;
+    u32 key_size;
 } hash_table_t;
 
 inline internal u32

@@ -13,6 +13,9 @@ InitGLRenderer(gl_renderer *gl)
     gl->glGenBuffers(1, &gl->vboID[VBO_UV]);
     gl->glBindBuffer(GL_ARRAY_BUFFER, gl->vboID[VBO_UV]);
     
+    gl->glGenBuffers(1, &gl->vboID[VBO_NORMAL]);
+    gl->glBindBuffer(GL_ARRAY_BUFFER, gl->vboID[VBO_NORMAL]);
+    
     gl->glGenBuffers(1, &gl->vboID[VBO_COLOR]);
     gl->glBindBuffer(GL_ARRAY_BUFFER, gl->vboID[VBO_COLOR]);
     
@@ -23,6 +26,7 @@ InitGLRenderer(gl_renderer *gl)
     
     gl->rb.vertices = NULL;
     gl->rb.uvs = NULL;
+    gl->rb.normals = NULL;
     gl->rb.colors = NULL;
     gl->rb.indices = NULL;
     gl->rb.cmds = NULL;
@@ -138,18 +142,9 @@ LoadShader(gl_renderer *gl, shader *outShader, u8 *code)
     if(outShader->id > 0)
     {
         // TODO(ajeej): put names in array and loop
-        outShader->locs[SHADER_LOC_MATRIX_VIEW] =
-            GetUniformLocation(gl, outShader->id, SHADER_MATRIX_VIEW_NAME);
-        outShader->locs[SHADER_LOC_MATRIX_PROJECTION] =
-            GetUniformLocation(gl, outShader->id, SHADER_MATRIX_PROJECTION_NAME);
-        outShader->locs[SHADER_LOC_SAMPLER2D_DIFFUSE] =
-            GetUniformLocation(gl, outShader->id, SHADER_SAMPLER2D_DIFFUSE_NAME);
-        outShader->locs[SHADER_LOC_SAMPLER2D_SPECULAR] =
-            GetUniformLocation(gl, outShader->id, SHADER_SAMPLER2D_SPECULAR_NAME);
-        outShader->locs[SHADER_LOC_SAMPLER2D_NORMAL] =
-            GetUniformLocation(gl, outShader->id, SHADER_SAMPLER2D_NORMAL_NAME);
-        outShader->locs[SHADER_LOC_SAMPLER2D_OCCULSION] =
-            GetUniformLocation(gl, outShader->id, SHADER_SAMPLER2D_OCCULSION_NAME);
+        
+        for(u32 loc_idx = 0; loc_idx < SHADER_LOC_COUNT; loc_idx++)
+            outShader->locs[loc_idx] = GetUniformLocation(gl, outShader->id, shader_var_names[loc_idx]);
     }
 }
 
@@ -327,6 +322,12 @@ SubmitRenderBuffer(gl_renderer *gl, asset_manager_t *assets)
     gl->glVertexAttribPointer(1, 2, GL_FLOAT, 0, 0, 0);
     gl->glEnableVertexAttribArray(1);
     
+    gl->glBindBuffer(GL_ARRAY_BUFFER, gl->vboID[VBO_NORMAL]);
+    gl->glBufferData(GL_ARRAY_BUFFER, GetStackSize(rb->normals),
+                     (u8 *)rb->normals, GL_DYNAMIC_DRAW);
+    gl->glVertexAttribPointer(2, 3, GL_FLOAT, 0, 0, 0);
+    gl->glEnableVertexAttribArray(2);
+    
     /*gl->glBindBuffer(GL_ARRAY_BUFFER, gl->vboID[VBO_COLOR]);
     gl->glBufferData(GL_ARRAY_BUFFER, GetStackSize(rb->colors),
                      (u8 *)rb->colors, GL_DYNAMIC_DRAW);
@@ -340,25 +341,31 @@ SubmitRenderBuffer(gl_renderer *gl, asset_manager_t *assets)
     u64 max = GetStackCount(rb->cmds);
     render_cmd *cmd = rb->cmds;
     
-    // TODO(ajeej):temp
-    u32 zero = 0;
     for(u64 i = 0; i < max; i++, cmd++)
     {
         material_t *material = assets->materials+cmd->materialID;
         
-        gl->glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D,
-                      assets->tex_ids[material->maps[MATERIAL_MAP_DIFFUSE].tex_id]);
+        SetUniform(gl, assets->shaders[0].locs[SHADER_LOC_MATRIX_MODEL],
+                   (void *)cmd->transform.elements,
+                   UNIFORM_MATRIX, 1);
         
-        SetUniform(gl, material->shad.locs[SHADER_LOC_SAMPLER2D_DIFFUSE],
-                   (void *)&zero, UNIFORM_SAMPLER2D, 1);
+        for(u32 i = 0; i < 2; i++) {
+            gl->glActiveTexture(GL_TEXTURE0 + i);
+            glBindTexture(GL_TEXTURE_2D,
+                          assets->tex_ids[material->maps[i].tex_id]);
+            
+            SetUniform(gl, assets->shaders[0].locs[SHADER_LOC_SAMPLER2D_DIFFUSE+i],
+                       (void *)&i, UNIFORM_SAMPLER2D, 1);
+        }
         
         glDrawElements(cmd->primitiveType, cmd->indicesCount,
                        GL_UNSIGNED_SHORT,
                        (void *)(cmd->indicesIdx*sizeof(u16)));
         
-        gl->glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        for(u32 i = 0; i < 2; i++) {
+            gl->glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, 0);
+        }
     }
     
     gl->glBindVertexArray(0);

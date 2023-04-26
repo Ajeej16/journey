@@ -33,7 +33,7 @@ asset_manager_t *assets)
 typedef INIT_APP(init_app);
 
 #define UPDATE_AND_RENDER(name) void name(render_buffer *rb, input_state *inputState,\
-asset_manager_t *assets)
+asset_manager_t *assets, f64 dt)
 typedef UPDATE_AND_RENDER(update_and_render);
 
 typedef struct app_function_table {

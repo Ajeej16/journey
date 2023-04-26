@@ -40,19 +40,47 @@ typedef enum uniform_type {
 enum {
     SHADER_LOC_MATRIX_VIEW = 0,
     SHADER_LOC_MATRIX_PROJECTION,
+    SHADER_LOC_MATRIX_MODEL,
     SHADER_LOC_SAMPLER2D_DIFFUSE,
     SHADER_LOC_SAMPLER2D_SPECULAR,
     SHADER_LOC_SAMPLER2D_NORMAL,
     SHADER_LOC_SAMPLER2D_OCCULSION,
+    SHADER_LOC_VEC3_LIGHT_DIR,
+    SHADER_LOC_VEC3_AMBIENT,
+    SHADER_LOC_VEC3_DIFFUSE,
+    SHADER_LOC_VEC3_SPECULAR,
+    SHADER_LOC_VEC3_VIEW_POS,
     SHADER_LOC_COUNT
 };
 
 #define SHADER_MATRIX_VIEW_NAME "view"
 #define SHADER_MATRIX_PROJECTION_NAME "proj"
+#define SHADER_MATRIX_MODEL_NAME "model"
 #define SHADER_SAMPLER2D_DIFFUSE_NAME "diffuse_map"
 #define SHADER_SAMPLER2D_SPECULAR_NAME "specular_map"
 #define SHADER_SAMPLER2D_NORMAL_NAME "normal_map"
 #define SHADER_SAMPLER2D_OCCULSION_NAME "occulsion_map"
+#define SHADER_VEC3_LIGHT_DIR_NAME "light.dir"
+#define SHADER_VEC3_AMBIENT_NAME "light.ambient"
+#define SHADER_VEC3_DIFFUSE_NAME "light.diffuse"
+#define SHADER_VEC3_SPECULAR_NAME "light.specular"
+#define SHADER_VEC3_VIEW_POS_NAME "view_pos"
+
+global char *shader_var_names[] = {
+    SHADER_MATRIX_VIEW_NAME,
+    SHADER_MATRIX_PROJECTION_NAME, 
+    SHADER_MATRIX_MODEL_NAME,
+    SHADER_SAMPLER2D_DIFFUSE_NAME ,
+    SHADER_SAMPLER2D_SPECULAR_NAME,
+    SHADER_SAMPLER2D_NORMAL_NAME, 
+    SHADER_SAMPLER2D_OCCULSION_NAME,
+    SHADER_VEC3_LIGHT_DIR_NAME,
+    SHADER_VEC3_AMBIENT_NAME,
+    SHADER_VEC3_DIFFUSE_NAME,
+    SHADER_VEC3_SPECULAR_NAME,
+    SHADER_VEC3_VIEW_POS_NAME,
+};
+
 
 typedef struct uniform_entry {
     uniform_type type;
@@ -119,13 +147,12 @@ typedef enum material_map_idx_t {
 
 typedef struct material_map_t {
     u64 tex_id;
-    color color;
+    color colour;
     f32 value;
 } material_map_t;
 
 typedef struct material_t {
     char *name;
-    shader shad;
     material_map_t maps[5];
 } material_t;
 
@@ -134,12 +161,15 @@ typedef struct mesh_t {
     u32 material_id;
 } mesh_t;
 
+// TODO(ajeej): change verts to not be dynamic
 typedef struct model_t {
-    v3 *verts;
-    v2 *tex_coords;
-    v3 *norms;
-    u32 vert_count, tex_count, norm_count;
+    STACK(v3) *verts;
+    STACK(v2) *tex_coords;
+    STACK(v3) *norms;
+    
     STACK(mesh_t) *meshes;
+    
+    m4 transform;
 } model_t;
 
 
@@ -152,6 +182,7 @@ typedef struct camera {
 
 typedef struct render_cmd {
     u32 materialID;
+    m4 transform;
     u32 indicesIdx;
     u32 indicesCount;
     u32 primitiveType;

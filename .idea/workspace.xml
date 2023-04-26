@@ -19,22 +19,19 @@
   <component name="ChangeListManager">
     <list default="true" id="1cca264b-650c-45b5-87da-c13806c6e899" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libs/mac/libglfw.3.dylib" beforeDir="false" afterPath="$PROJECT_DIR$/libs/mac/libglfw.3.dylib" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libs/mac/libglfw3.a" beforeDir="false" afterPath="$PROJECT_DIR$/libs/mac/libglfw3.a" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shaders/test.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/shaders/test.glsl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/glfw_joy_opengl.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/glfw_joy_opengl.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/joy_app.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/joy_app.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/joy_assets.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/joy_assets.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/joy_assets.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/joy_assets.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/joy_gl.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/joy_gl.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/joy_platform.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/joy_platform.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/joy_gl.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/joy_gl.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/joy_hash.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/joy_hash.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/joy_obj_loader.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/joy_obj_loader.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/joy_renderer.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/joy_renderer.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/joy_renderer.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/joy_renderer.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/joy_utils.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/joy_utils.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/opengl_functions.inc" beforeDir="false" afterPath="$PROJECT_DIR$/src/opengl_functions.inc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/win32_joy.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/win32_joy.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/win32_joy_opengl.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/win32_joy_opengl.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/win32_joy_renderer.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/win32_joy_renderer.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/win32_sdl_build.bat" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -111,14 +108,14 @@
     </key>
   </component>
   <component name="RunManager">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="all" type="CLionNativeAppRunConfigurationType" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="journey" TARGET_NAME="all" CONFIG_NAME="all" version="1" RUN_PATH="$PROJECT_DIR$/build/glfw_joy.exe">
       <method v="2">
         <option name="CLION.COMPOUND.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
   </component>
@@ -137,7 +134,8 @@
       <workItem from="1680728912085" duration="59000" />
       <workItem from="1681426602580" duration="25795000" />
       <workItem from="1681660707961" duration="5502000" />
-      <workItem from="1682189824694" duration="761000" />
+      <workItem from="1682189824694" duration="762000" />
+      <workItem from="1682285397285" duration="340000" />
     </task>
     <servers />
   </component>

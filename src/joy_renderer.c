@@ -124,29 +124,28 @@ UnloadImage(image_t image)
 }
 
 internal material_t
-load_default_material(shader *shad)
+load_default_material()
 {
     material_t material = {0};
     
-    material.shad = *shad;
-    
     material.maps[MATERIAL_MAP_DIFFUSE].tex_id = (u32)(-1);
-    material.maps[MATERIAL_MAP_DIFFUSE].color = COLOR(255, 255, 255, 255);
-    material.maps[MATERIAL_MAP_SPECULAR].color = COLOR(255, 255, 255, 255);
+    material.maps[MATERIAL_MAP_DIFFUSE].colour = COLOR(255, 255, 255, 255);
+    material.maps[MATERIAL_MAP_SPECULAR].colour = COLOR(255, 255, 255, 255);
     return material;
 }
 
 internal render_cmd *
-PushRenderCommand(render_buffer *rb, u32 materialID, 
+PushRenderCommand(render_buffer *rb, u32 materialID, m4 transform,
                   u32 indicesCount, u32 primitiveType)
 {
     render_cmd *rc = GetStackLast(rb->cmds);
-    if(!rc || rc->primitiveType != primitiveType || rc->materialID != materialID)
+    if(1 ||!rc || rc->primitiveType != primitiveType || rc->materialID != materialID)
     {
         rc = PushOnStack(&rb->cmds);
         rc->indicesIdx = GetStackCount(rb->indices);
         rc->indicesCount = 0;
         rc->materialID = materialID;
+        rc->transform = transform;
         rc->primitiveType = primitiveType;
     }
     
@@ -166,7 +165,7 @@ QuadToVerts(v3 *verts, v3 pos, v2 dim)
 
 
 // TODO(ajeej): have work with material id
-internal void
+/*internal void
 PushTexturedQuad(render_buffer *rb, v3 pos, v2 dim, v2 uv[4],
                  u32 materialID, color tint)
 {
@@ -207,7 +206,7 @@ PushQuad(render_buffer *rb, v3 pos, v2 dim, color tint)
     
     // TODO(ajeej): pass white texture id
     PushTexturedQuad(rb, pos, dim, uv, 0, tint);
-}
+}*/
 
 /*internal void
 PushCube(render_buffer *rb, v3 pos, v3 dim, color tint)
@@ -270,8 +269,185 @@ PushCube(render_buffer *rb, v3 pos, v3 dim, color tint)
     
 }*/
 
+inline internal void
+UpdateMaterial(asset_manager_t *assets, model_t *model, u64 material_id)
+{
+    // TODO(ajeej): be able to choose which mesh gets which material
+    for(u32 m_idx = 0; m_idx < GetStackCount(model->meshes); m_idx++)
+        model->meshes[m_idx].material_id = material_id;
+}
+
+internal u64
+CreateModel(asset_manager_t *assets, v3 *verts, v2 *uvs, v3 *norms, 
+            u64 vert_count, u16 *indices, u64 idx_count)
+{
+    model_t *model = PushOnStack(&assets->models);
+    model->transform = mat4_identity();
+    
+    v3 *m_verts = PushArrayOnStack(&model->verts, vert_count);
+    v2 *m_uvs = PushArrayOnStack(&model->tex_coords, vert_count);
+    v3 *m_norms = PushArrayOnStack(&model->norms, vert_count);
+    
+    memcpy(m_verts, verts, vert_count*sizeof(*verts));
+    memcpy(m_uvs, uvs, vert_count*sizeof(*uvs));
+    memcpy(m_norms, norms, vert_count*sizeof(*norms));
+    
+    mesh_t *mesh = PushOnStack(&model->meshes);
+    u16 *m_indices = PushArrayOnStack(&mesh->indices, idx_count);
+    memcpy(m_indices, indices, idx_count*sizeof(*indices));
+    mesh->material_id = 0;
+    
+    return assets->free_model_id++;
+}
+
+internal u64
+CreatePlane(asset_manager_t *assets, v2 dim)
+{
+    f32 half_x = dim.x*0.5f, half_y = dim.y*0.5f;
+    
+    v3 verts[] = {
+        vec3_init(-half_x, half_y, 0.0f),
+        vec3_init( half_x, half_y, 0.0f),
+        vec3_init(-half_x,-half_y, 0.0f),
+        vec3_init( half_x,-half_y, 0.0f),
+        vec3_init( half_x, half_y, 0.0f),
+        vec3_init(-half_x, half_y, 0.0f),
+        vec3_init( half_x,-half_y, 0.0f),
+        vec3_init(-half_x,-half_y, 0.0f),
+    };
+    
+    v3 norms[] = {
+        vec3_init(0.0f, 0.0f, 1.0f),
+        vec3_init(0.0f, 0.0f, 1.0f),
+        vec3_init(0.0f, 0.0f, 1.0f),
+        vec3_init(0.0f, 0.0f, 1.0f),
+        vec3_init(0.0f, 0.0f, -1.0f),
+        vec3_init(0.0f, 0.0f, -1.0f),
+        vec3_init(0.0f, 0.0f, -1.0f),
+        vec3_init(0.0f, 0.0f, -1.0f),
+    };
+    
+    v2 uvs[] = {
+        vec2_init(0.0f, 0.0f),
+        vec2_init(1.0f, 0.0f),
+        vec2_init(0.0f, 1.0f),
+        vec2_init(1.0f, 1.0f),
+        vec2_init(0.0f, 0.0f),
+        vec2_init(1.0f, 0.0f),
+        vec2_init(0.0f, 1.0f),
+        vec2_init(1.0f, 1.0f),
+    };
+    
+    u16 indices[] = {
+        0, 2, 1, 1, 2, 3,
+        4, 6, 5, 5, 6, 7,
+    };
+    
+    return CreateModel(assets, verts, uvs, norms, ARRAY_COUNT(verts),
+                       indices, ARRAY_COUNT(indices));
+}
+
+internal u64
+CreateCube(asset_manager_t *assets, v3 dim)
+{
+    f32 half_x = dim.x*0.5f, half_y = dim.y*0.5f, half_z = dim.z*0.5f;
+    
+    v3 verts[] = {
+        vec3_init(-half_x, half_y, half_z), // FRONT
+        vec3_init( half_x, half_y, half_z),
+        vec3_init(-half_x,-half_y, half_z),
+        vec3_init( half_x,-half_y, half_z),
+        vec3_init( half_x, half_y, half_z), // RIGHT
+        vec3_init( half_x, half_y,-half_z),
+        vec3_init( half_x,-half_y, half_z),
+        vec3_init( half_x,-half_y,-half_z),
+        vec3_init(-half_x, half_y,-half_z), // LEFT
+        vec3_init(-half_x, half_y, half_z),
+        vec3_init(-half_x,-half_y,-half_z),
+        vec3_init(-half_x,-half_y, half_z),
+        vec3_init( half_x, half_y,-half_z), // BACK
+        vec3_init(-half_x, half_y,-half_z),
+        vec3_init( half_x,-half_y,-half_z),
+        vec3_init(-half_x,-half_y,-half_z),
+        vec3_init(-half_x, half_y,-half_z), // TOP
+        vec3_init( half_x, half_y,-half_z),
+        vec3_init(-half_x, half_y, half_z),
+        vec3_init( half_x, half_y, half_z),
+        vec3_init(-half_x,-half_y, half_z), // BOTTOM
+        vec3_init( half_x,-half_y, half_z),
+        vec3_init(-half_x,-half_y,-half_z),
+        vec3_init( half_x,-half_y,-half_z),
+    };
+    
+    v3 norms[] = {
+        vec3_init(0.0f, 0.0f, 1.0f),
+        vec3_init(0.0f, 0.0f, 1.0f),
+        vec3_init(0.0f, 0.0f, 1.0f),
+        vec3_init(0.0f, 0.0f, 1.0f),
+        vec3_init(1.0f, 0.0f, 0.0f),
+        vec3_init(1.0f, 0.0f, 0.0f),
+        vec3_init(1.0f, 0.0f, 0.0f),
+        vec3_init(1.0f, 0.0f, 0.0f),
+        vec3_init(-1.0f, 0.0f, 0.0f),
+        vec3_init(-1.0f, 0.0f, 0.0f),
+        vec3_init(-1.0f, 0.0f, 0.0f),
+        vec3_init(-1.0f, 0.0f, 0.0f),
+        vec3_init(0.0f, 0.0f, -1.0f),
+        vec3_init(0.0f, 0.0f, -1.0f),
+        vec3_init(0.0f, 0.0f, -1.0f),
+        vec3_init(0.0f, 0.0f, -1.0f),
+        vec3_init(0.0f, 1.0f, 0.0f),
+        vec3_init(0.0f, 1.0f, 0.0f),
+        vec3_init(0.0f, 1.0f, 0.0f),
+        vec3_init(0.0f, 1.0f, 0.0f),
+        vec3_init(0.0f, -1.0f, 0.0f),
+        vec3_init(0.0f, -1.0f, 0.0f),
+        vec3_init(0.0f, -1.0f, 0.0f),
+        vec3_init(0.0f, -1.0f, 0.0f),
+    };
+    
+    v2 uvs[] = {
+        vec2_init(0.0f, 0.0f),
+        vec2_init(1.0f, 0.0f),
+        vec2_init(0.0f, 1.0f),
+        vec2_init(1.0f, 1.0f),
+        vec2_init(0.0f, 0.0f),
+        vec2_init(1.0f, 0.0f),
+        vec2_init(0.0f, 1.0f),
+        vec2_init(1.0f, 1.0f),
+        vec2_init(0.0f, 0.0f),
+        vec2_init(1.0f, 0.0f),
+        vec2_init(0.0f, 1.0f),
+        vec2_init(1.0f, 1.0f),
+        vec2_init(0.0f, 0.0f),
+        vec2_init(1.0f, 0.0f),
+        vec2_init(0.0f, 1.0f),
+        vec2_init(1.0f, 1.0f),
+        vec2_init(0.0f, 0.0f),
+        vec2_init(1.0f, 0.0f),
+        vec2_init(0.0f, 1.0f),
+        vec2_init(1.0f, 1.0f),
+        vec2_init(0.0f, 0.0f),
+        vec2_init(1.0f, 0.0f),
+        vec2_init(0.0f, 1.0f),
+        vec2_init(1.0f, 1.0f),
+    };
+    
+    u16 indices[] = {
+        0, 2, 1, 1, 2, 3,
+        4, 6, 5, 5, 6, 7,
+        8, 10, 9, 9, 10, 11,
+        12, 14, 13, 13, 14, 15,
+        16, 18, 17, 17, 18, 19,
+        20, 22, 21, 21, 22, 23,
+    };
+    
+    return CreateModel(assets, verts, uvs, norms, ARRAY_COUNT(verts),
+                       indices, ARRAY_COUNT(indices));
+}
+
 internal void
-PushModel(render_buffer *rb, asset_manager_t *assets, u64 model_id)
+PushModel(render_buffer *rb, asset_manager_t *assets, u64 model_id, m4 transform)
 {
     model_t *model = assets->models+model_id;
     u32 vert_idx = GetStackCount(rb->vertices);
@@ -280,6 +456,8 @@ PushModel(render_buffer *rb, asset_manager_t *assets, u64 model_id)
     memcpy(verts, model->verts, GetStackCount(model->verts)*sizeof(*verts));
     v2 *tex_coords = PushArrayOnStack(&rb->uvs, GetStackCount(model->tex_coords));
     memcpy(tex_coords, model->tex_coords, GetStackCount(model->tex_coords)*sizeof(*tex_coords));
+    v3 *norms = PushArrayOnStack(&rb->normals, GetStackCount(model->norms));
+    memcpy(norms, model->norms, GetStackCount(model->norms)*sizeof(*norms));
     
     mesh_t *mesh = NULL;
     u32 idx_count = 0;
@@ -289,7 +467,7 @@ PushModel(render_buffer *rb, asset_manager_t *assets, u64 model_id)
         mesh = model->meshes+m_idx;
         
         idx_count = GetStackCount(mesh->indices);
-        PushRenderCommand(rb, mesh->material_id, idx_count, PRIMITIVE_TRIANGLES);
+        PushRenderCommand(rb, mesh->material_id, transform, idx_count, PRIMITIVE_TRIANGLES);
         
         indices = PushArrayOnStack(&rb->indices, idx_count);
         for(u32 i_idx = 0; i_idx < idx_count; i_idx++)

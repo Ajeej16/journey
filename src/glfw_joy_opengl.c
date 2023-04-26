@@ -96,11 +96,13 @@ INIT_RENDERER(InitRenderer)
     glViewport(0, 0, w, h);
     glEnable(GL_DEPTH_TEST);
     //glEnable(GL_CULL_FACE);
+    glEnable(GL_ALPHA_TEST);
     glEnable(GL_BLEND);
     glEnable(GL_SMOOTH);
     //glCullFace(GL_BACK);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glDepthFunc(GL_LEQUAL);
+    //glDepthFunc(GL_LEQUAL);
+    glDepthMask(GL_FALSE);
     
     return (render_buffer *)gl;
 }
@@ -116,6 +118,7 @@ START_FRAME(StartFrame)
     
     glClearColor(255, 0, 0, 255);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    
     
     for(u32 entry = 0;
         entry < rb->shaderEntryCount;

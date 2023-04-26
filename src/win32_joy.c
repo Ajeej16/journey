@@ -160,7 +160,42 @@ PLATFORM_CLOSE_FILE(Win32CloseFile)
 }
 
 #include "joy_load.c"
-#include "joy_assets.c"
+
+typedef struct timer_t {
+    LARGE_INTEGER counts_per_second;
+    LARGE_INTEGER start;
+} timer_t;
+
+internal u32
+Win32InitTimer(timer_t *timer)
+{
+    if(QueryPerformanceFrequency(&timer->counts_per_second))
+        return 1;
+    
+    return 0;
+}
+
+internal void
+Win32StartTimer(timer_t *timer)
+{
+    QueryPerformanceCounter(&timer->start);
+}
+
+internal f64
+Win32EndTimer(timer_t *timer, u32 cycle)
+{
+    LARGE_INTEGER end;
+    QueryPerformanceFrequency(&timer->counts_per_second);
+    QueryPerformanceCounter(&end);
+    
+    i64 counts_elapsed = end.QuadPart - timer->start.QuadPart;
+    f64 seconds_elapsed = counts_elapsed/(f64)timer->counts_per_second.QuadPart;
+    
+    if(cycle)
+        timer->start = end;
+    
+    return seconds_elapsed;
+}
 
 internal void
 Win32ProcessPendingMessages(HWND window, input_state *inputState)
@@ -296,6 +331,8 @@ Win32WindowProcess(HWND window, UINT message,
 int WinMain(HINSTANCE instance, HINSTANCE prevInstance,
             PSTR cmdLine, INT cmdShow)
 {
+    timer_t timer = {0};
+    
     WNDCLASSA windowClass = {0};
     windowClass.style = CS_HREDRAW|CS_VREDRAW|CS_OWNDC;
     windowClass.lpfnWndProc = Win32WindowProcess;
@@ -360,27 +397,31 @@ int WinMain(HINSTANCE instance, HINSTANCE prevInstance,
     
     SetCursorPos(rect.left+400, rect.bottom-300);
     
-    render_buffer *rb = renderFunctions.initRenderer(renderDC, winPos, winDim);
+    asset_manager_t assets = {0};
+    render_buffer *rb = renderFunctions.initRenderer(renderDC, winPos, winDim,
+                                                     &assets);
     
     input_state *inputState = InitInputState();
     inputState->mousePos.x = rect.left+400;
     inputState->mousePos.y = rect.bottom-300;
     
-    asset_manager_t assets = {0};
-    InitAssetManager(&assets);
-    
     ShowWindow(window, SW_SHOW);
     UpdateWindow(window);
     
+    Win32InitTimer(&timer);
+    Win32StartTimer(&timer);
     appFunctions.initApp(&platFunctions, rb, &assets);
     
+    f64 dt = 0.0;
     while(running)
     {
+        dt = 0.1;//Win32EndTimer(&timer, 1);
+        
         Win32ProcessPendingMessages(window, inputState);
         
         renderFunctions.startFrame(&platFunctions, rb, &assets);
         
-        appFunctions.updateAndRender(rb, inputState, &assets);
+        appFunctions.updateAndRender(rb, inputState, &assets, dt);
         
         renderFunctions.endFrame(rb, &assets);
     }

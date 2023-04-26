@@ -4,13 +4,6 @@ typedef struct vert_index_t {
     u32 v_idx, t_idx, n_idx;
 } vert_index_t;
 
-enum {
-    VERT_TYPE_NUL = 0,
-    VERT_TYPE_POS = 1,
-    VERT_TYPE_TEX = 2,
-    VERT_TYPE_NOR = 3,
-};
-
 internal char *
 parse_f_command(char *token, vert_index_t *vi)
 {
@@ -51,7 +44,6 @@ parse_vec3(char *token, f32 el[3])
 internal char *
 parse_v(char *token, v3 **v, v2 **t, v3 **n)
 {
-    u32 vert_type = 0;
     f32 *el = NULL;
     u32 el_count = 0;
     u32 el_idx;
@@ -62,19 +54,16 @@ parse_v(char *token, v3 **v, v2 **t, v3 **n)
         el_idx = 0;
         
         if(*token == ' ') { 
-            vert_type = VERT_TYPE_POS;
             el = (f32 *)PushOnStack(v);
             el_count = 3;
             token += 1;
         }
         else if (*token == 't') {
-            vert_type = VERT_TYPE_TEX;
             el = (f32 *)PushOnStack(t);
             el_count = 2;
             token += 2;
         }
         else if (*token == 'n') {
-            vert_type = VERT_TYPE_NOR;
             el = (f32 *)PushOnStack(n);
             el_count = 3;
             token += 2;
@@ -110,6 +99,8 @@ parse_f(char *token, v3 *v, v2 *t, v3 *n, model_t *model,
     u16 *hashed_idx = NULL;
     u16 *indices = NULL;
     mesh_t *cur_mesh = GetStackLast(model->meshes);
+    // TODO(ajeej): make model init functions
+    model->transform = mat4_identity();
     
     while(*token == 'f') 
     {
@@ -146,7 +137,7 @@ parse_f(char *token, v3 *v, v2 *t, v3 *n, model_t *model,
             v2 *tempt = PushOnStack(&model->tex_coords);
             *tempt = t[vi.t_idx-1-t_offset];
             v3 *tempn = PushOnStack(&model->norms);
-            *tempn = v[vi.n_idx-1-n_offset];
+            *tempn = n[vi.n_idx-1-n_offset];
             vert_indices[vert_count++] = (*indices_idx)++;
         }
         token++;
@@ -188,15 +179,16 @@ parse_command_filename(char *token, char **name)
 
 internal void
 parse_mtl(platform_functions *plat_funcs, asset_manager_t *assets, char *mtl_dir,
-          u8 *token, material_t **materials, shader *shad)
+          u8 *token, material_t **materials)
 {
     material_t *material = 0;
     while(*token)
     {
         if(strncmp(token, "newmtl", 6) == 0)
         {
+            assets->free_material_id++;
             material = PushOnStack(materials);
-            *material = load_default_material(shad);
+            *material = load_default_material();
             
             token += 7;
             
@@ -225,10 +217,10 @@ parse_mtl(platform_functions *plat_funcs, asset_manager_t *assets, char *mtl_dir
             f32 el[3];
             token = parse_vec3(token, el);
             
-            material->maps[idx].color = COLOR(el[0]*255,
-                                              el[1]*255,
-                                              el[2]*255,
-                                              255);
+            material->maps[idx].colour = COLOR(el[0]*255,
+                                               el[1]*255,
+                                               el[2]*255,
+                                               255);
             token++;
         }
         else if(strncmp(token, "map_", 4) == 0)
@@ -283,8 +275,6 @@ parse_mtl(platform_functions *plat_funcs, asset_manager_t *assets, char *mtl_dir
     }
 }
 
-// TODO(ajeej): pass obj file path to function, need in order to load mtl and textures
-//              take the directory and attach mtl/texture filename to the end
 
 internal model_t
 parse_obj(platform_functions *plat_funcs, asset_manager_t *assets, char *obj_dir, void *data,
@@ -351,8 +341,7 @@ parse_obj(platform_functions *plat_funcs, asset_manager_t *assets, char *obj_dir
             
             void *data = NULL;
             plat_funcs->readFile(path, &data, NULL);
-            parse_mtl(plat_funcs, assets, obj_dir, (u8 *)data, &assets->materials,
-                      shad);
+            parse_mtl(plat_funcs, assets, obj_dir, (u8 *)data, &assets->materials);
             free(mtl_name);
             free(path);
             

@@ -234,13 +234,15 @@ INIT_RENDERER(InitRenderer)
     
     glViewport(winPos.x, winPos.y, winDim.x, winDim.y);
     glEnable(GL_DEPTH_TEST);
-    //glEnable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
     glEnable(GL_SMOOTH);
     glCullFace(GL_BACK);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glDepthFunc(GL_LEQUAL);
     //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+    
+    InitAssetManager(assets);
     
     return (render_buffer *)gl;
 }
@@ -249,7 +251,7 @@ START_FRAME(StartFrame)
 {
     gl_renderer *gl = (gl_renderer *)rb;
     
-    glClearColor(255, 0, 0, 255);
+    glClearColor(0, 0, 0, 255);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     
     for(u32 entry = 0;
@@ -260,16 +262,14 @@ START_FRAME(StartFrame)
         
         switch(asset_entry->type)
         {
-            case ASSET_MODEL: {
-                model_t *model = PushOnStack(&assets->models);
-                asset_model_t *model_data = asset_entry->data;
+            
+            case ASSET_RAW_TEXTURE: {
+                u64 *tex_id = PushOnStack(&assets->tex_ids);
+                asset_raw_texture_t *tex_data = asset_entry->data;
                 
-                // TODO(ajeej): idk if i want the material to have the shader id
-                //              would make more sense if the model had it
-                *model = parse_obj(plat_funcs, assets, model_data->path, model_data->data,
-                                   assets->shaders+model_data->shader_id);
+                *tex_id = LoadTextureFromImage(gl, *tex_data).id;
                 
-                free(model_data->path);
+                UnloadImage(*tex_data);
                 free(asset_entry->data);
             } break;
             
@@ -302,6 +302,18 @@ START_FRAME(StartFrame)
                rb->cam.view.elements, UNIFORM_MATRIX, 1);
     SetUniform(gl, assets->shaders[0].locs[SHADER_LOC_MATRIX_PROJECTION],
                rb->cam.projection.elements, UNIFORM_MATRIX, 1);
+    
+    SetUniform(gl, assets->shaders[0].locs[SHADER_LOC_VEC3_VIEW_POS],
+               rb->cam.pos.elements, UNIFORM_VEC3, 1);
+    
+    SetUniform(gl, assets->shaders[0].locs[SHADER_LOC_VEC3_LIGHT_DIR],
+               vec3_init(-0.2f, -1.0f, -0.3f).elements, UNIFORM_VEC3, 1);
+    SetUniform(gl, assets->shaders[0].locs[SHADER_LOC_VEC3_AMBIENT],
+               vec3_init(0.4, 0.4f, 0.4f).elements, UNIFORM_VEC3, 1);
+    SetUniform(gl, assets->shaders[0].locs[SHADER_LOC_VEC3_DIFFUSE],
+               vec3_init(0.7, 0.7f, 0.7f).elements, UNIFORM_VEC3, 1);
+    SetUniform(gl, assets->shaders[0].locs[SHADER_LOC_VEC3_SPECULAR],
+               vec3_init(1.0, 1.0f, 1.0f).elements, UNIFORM_VEC3, 1);
 }
 
 END_FRAME(EndFrame)
@@ -312,6 +324,7 @@ END_FRAME(EndFrame)
     
     ClearStack(rb->vertices);
     ClearStack(rb->uvs);
+    ClearStack(rb->normals);
     ClearStack(rb->colors);
     ClearStack(rb->indices);
     ClearStack(rb->cmds);

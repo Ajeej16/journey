@@ -1,5 +1,4 @@
 
-
 internal hash_table_t *
 create_hash_table_of_size(u64 size, u32 el_size)
 {

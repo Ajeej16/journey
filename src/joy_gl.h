@@ -15,6 +15,7 @@ typedef struct gl_renderer {
 enum {
     VBO_POSITION = 0,
     VBO_UV,
+    VBO_NORMAL,
     VBO_COLOR,
     VBO_INDEX,
     VBO_COUNT,
