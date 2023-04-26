@@ -4,6 +4,12 @@ internal model_t
 parse_obj(platform_functions *plat_funcs, asset_manager_t *assets, char *obj_dir, void *data,
           shader *shad);
 
+inline model_t *
+GetModel(asset_manager_t *manager, u64 model_id)
+{
+    return manager->models+model_id;
+}
+
 // TODO(ajeej): put this all together
 internal u64
 AddModel(platform_functions *plat_funcs, asset_manager_t *assets, char *filename,

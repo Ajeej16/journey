@@ -50,6 +50,8 @@ enum {
     SHADER_LOC_VEC3_DIFFUSE,
     SHADER_LOC_VEC3_SPECULAR,
     SHADER_LOC_VEC3_VIEW_POS,
+    SHADER_LOC_VEC4_MAT_DIFFUSE,
+    SHADER_LOC_VEC4_MAT_SPECULAR,
     SHADER_LOC_COUNT
 };
 
@@ -65,6 +67,8 @@ enum {
 #define SHADER_VEC3_DIFFUSE_NAME "light.diffuse"
 #define SHADER_VEC3_SPECULAR_NAME "light.specular"
 #define SHADER_VEC3_VIEW_POS_NAME "view_pos"
+#define SHADER_VEC4_MAT_DIFFUSE_NAME "mat_diffuse"
+#define SHADER_VEC4_MAT_SPECULAR_NAME "mat_specular"
 
 global char *shader_var_names[] = {
     SHADER_MATRIX_VIEW_NAME,
@@ -79,6 +83,8 @@ global char *shader_var_names[] = {
     SHADER_VEC3_DIFFUSE_NAME,
     SHADER_VEC3_SPECULAR_NAME,
     SHADER_VEC3_VIEW_POS_NAME,
+    SHADER_VEC4_MAT_DIFFUSE_NAME,
+    SHADER_VEC4_MAT_SPECULAR_NAME,
 };
 
 

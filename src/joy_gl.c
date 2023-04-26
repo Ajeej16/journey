@@ -356,6 +356,11 @@ SubmitRenderBuffer(gl_renderer *gl, asset_manager_t *assets)
             
             SetUniform(gl, assets->shaders[0].locs[SHADER_LOC_SAMPLER2D_DIFFUSE+i],
                        (void *)&i, UNIFORM_SAMPLER2D, 1);
+            
+            color colour = material->maps[i].colour;
+            SetUniform(gl, assets->shaders[0].locs[SHADER_LOC_VEC4_MAT_DIFFUSE+i],
+                       vec4_scale(vec4_init(colour.r, colour.g, colour.b, colour.a), 1.0f/255.0f).elements,
+                       UNIFORM_VEC4, 1);
         }
         
         glDrawElements(cmd->primitiveType, cmd->indicesCount,

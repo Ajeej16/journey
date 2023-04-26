@@ -1,24 +1,131 @@
 
-internal void
-InitEntity(entity_t *entity, v3 pos, u64 model_id)
+internal entity_manager_t *
+CreateEntityManager(u32 steps_per_frame)
 {
-    entity->model_id = model_id;
-    entity->physics.pos = pos;
-    entity->physics.vel = vec3_init(0.0f, 0.0f, 0.0f);
-    entity->physics.force = vec3_init(0.0f, 0.0f, 0.0f);
-    entity->physics.mass = 0.1;
-    entity->box_type = BOX_RECT;
-    entity->col_box = (collision_box_t){
-        vec3_init(pos.x-1.5f, pos.y-1.5f, pos.z-1.5f),
-        vec3_init(pos.x+1.5f, pos.y+1.5f, pos.z+1.5f),
-    };
+    entity_manager_t *result = malloc(sizeof(*result));
+    result->entities = NULL;
+    result->physics_comps = NULL;
+    
+    collision_handler_t *col_handler = malloc(sizeof(*col_handler));
+    col_handler->steps_per_frame = steps_per_frame;
+    col_handler->collisions = NULL;
+    result->col_handler = col_handler;
+    
+    return result;
+}
+
+inline internal collision_box_t
+InitAABB(v3 pos, v3 dim)
+{
+    aabb_t result = {0};
+    
+    v3 half_dim = vec3_scale(dim, 0.5f);
+    result.min = vec3_init(pos.x-half_dim.x, pos.y-half_dim.y, pos.z-half_dim.z);
+    result.max = vec3_init(pos.x+half_dim.x, pos.y+half_dim.y, pos.z+half_dim.z);
+    return result;
+}
+
+internal collision_box_t
+UpdateAABB(aabb_t aabb, v3 pos)
+{
+    aabb_t result = {0};
+    
+    v3 min = aabb.min;
+    v3 max = aabb.max;
+    v3 half_dim = vec3_init((max.x-min.x)*0.5f,
+                            (max.y-min.y)*0.5f,
+                            (max.z-min.z)*0.5f);
+    
+    result.min = vec3_init(pos.x-half_dim.x,
+                           pos.y-half_dim.y,
+                           pos.z-half_dim.z);
+    result.max = vec3_init(pos.x+half_dim.x,
+                           pos.y+half_dim.y,
+                           pos.z+half_dim.z);
+    
+    return result;
 }
 
 internal void
-DrawEntity(render_buffer *rb, asset_manager_t *assets, entity_t *entity)
+UpdateCollisionBox(physics_component_t *physics)
 {
-    model_t *model = assets->models+entity->model_id;
-    m4 transform = mat4_translate(entity->physics.pos);
+    if(physics->box_type == BOX_RECT)
+        physics->col_box = UpdateAABB(physics->col_box, physics->pos);
+    else
+        physics->col_box.pos = physics->pos;
+}
+
+inline internal collision_box_t
+InitSphere(v3 pos, f32 radius)
+{
+    sphere_t result = {0};
+    result.pos = pos;
+    result.radius = radius;
+    return result;
+}
+
+internal u64
+CreatePhysicsComponent(entity_manager_t *manager, v3 pos, f32 mass, 
+                       box_info_t box_info, box_type_t type)
+{
+    u64 id = GetStackCount(manager->physics_comps);
+    physics_component_t *physics_comp = PushOnStack(&manager->physics_comps);
+    
+    physics_comp->box_type = type;
+    if(type == BOX_SPHERE)
+        physics_comp->col_box = InitSphere(pos, box_info.radius);
+    else
+        physics_comp->col_box = InitAABB(pos, box_info.dim);
+    
+    physics_comp->mass = mass;
+    physics_comp->pos = pos;
+    physics_comp->vel = vec3_init(0.0f, 0.0f, 0.0f);
+    physics_comp->force = vec3_init(0.0f, 0.0f, 0.0f);
+    
+    return id;
+}
+
+internal u64
+CreateEntity(entity_manager_t *manager, v3 pos, f32 mass, u64 model_id,
+             box_info_t box_info, box_type_t type)
+{
+    u64 id = GetStackCount(manager->entities);
+    entity_t *entity = PushOnStack(&manager->entities);
+    
+    entity->model_id = model_id;
+    entity->physics_id = CreatePhysicsComponent(manager, pos, mass, box_info, type);
+    
+    return id;
+}
+
+inline entity_t *
+GetEntity(entity_manager_t *manager, u64 entity_id)
+{
+    return manager->entities+entity_id;
+}
+
+inline physics_component_t *
+GetPhysics(entity_manager_t *manager, u64 physics_id)
+{
+    return manager->physics_comps+physics_id;
+}
+
+inline void
+UpdateVelocity(entity_manager_t *manager, u64 entity_id, v3 vel)
+{
+    v3 *old_vel = &GetPhysics(manager, GetEntity(manager, entity_id)->physics_id)->vel;
+    *old_vel = vel;
+}
+
+internal void
+DrawEntity(render_buffer *rb, 
+           asset_manager_t *assets, entity_manager_t *entities,
+           u64 entity_id)
+{
+    entity_t *entity = GetEntity(entities, entity_id);
+    model_t *model = GetModel(assets, entity->model_id);
+    physics_component_t *physics = GetPhysics(entities, entity->physics_id);
+    m4 transform = mat4_translate(physics->pos);
     
     PushModel(rb, assets, entity->model_id, transform);
 }
@@ -31,10 +138,45 @@ UpdatePhysics(physics_component_t *physics, f64 dt)
     
     v3 temp = vec3_scale(physics->vel, dt);
     physics->pos = vec3_add(physics->pos, temp);
+    
+    UpdateCollisionBox(physics);
+}
+
+inline internal u32
+TestIntersectionRectToRect(v3 amin, v3 amax,
+                           v3 bmin, v3 bmax)
+{
+    
+    return ((amin.x <= bmax.x && amax.x >= bmin.x) &&
+            (amin.y <= bmax.y && amax.y >= bmin.y) &&
+            (amin.z <= bmax.z && amax.z >= bmin.z));
 }
 
 internal u32
-TestRectToRect(collision_handler_t *handler, entity_t *ea, entity_t *eb, f64 dt)
+TestIntersection(box_type_t atype, collision_box_t cba, 
+                 box_type_t btype, collision_box_t cbb)
+{
+    if(atype == BOX_SPHERE && btype == BOX_SPHERE)
+    {
+        return 0;//TestSphereToSphere(handler, ea, eb, dt);
+    }
+    else if(atype == BOX_SPHERE && btype == BOX_RECT)
+    {
+        return 0;//TestSphereToRect(handler, ea, eb, dt);
+    }
+    else if(atype == BOX_RECT && btype == BOX_SPHERE)
+    {
+        return 0;//TestSphereToRect(handler, eb, ea, dt);
+    }
+    else
+    {
+        return TestIntersectionRectToRect(cba.min, cba.max,
+                                          cbb.min, cbb.max);
+    }
+}
+
+internal u32
+TestRectToRect(entity_manager_t *manager, u64 pa_id, u64 pb_id, f64 dt)
 {
     v3 norms[6] = {
         vec3_init(-1.0f, 0.0f, 0.0f), vec3_init(1.0f, 0.0f, 0.0f),
@@ -43,10 +185,13 @@ TestRectToRect(collision_handler_t *handler, entity_t *ea, entity_t *eb, f64 dt)
     };
     f32 dist[6] = {0};
     
-    aabb_t abox = ea->col_box;
-    aabb_t bbox = eb->col_box;
-    physics_component_t aphysics = ea->physics;
-    physics_component_t bphysics = eb->physics;
+    collision_handler_t *handler = manager->col_handler;
+    physics_component_t *pa = GetPhysics(manager, pa_id);
+    physics_component_t *pb = GetPhysics(manager, pb_id);
+    aabb_t abox = pa->col_box;
+    aabb_t bbox = pb->col_box;
+    physics_component_t aphysics = *pa;
+    physics_component_t bphysics = *pb;
     
     v3 amin = abox.min;
     v3 amax = abox.max;
@@ -62,15 +207,11 @@ TestRectToRect(collision_handler_t *handler, entity_t *ea, entity_t *eb, f64 dt)
         UpdatePhysics(&aphysics, time_per_step);
         UpdatePhysics(&bphysics, time_per_step);
         
-        u32 intersect = (!(amin.x > bmax.x || amax.x < bmin.x) &&
-                         !(amin.y > bmax.y || amax.y < bmin.y) &&
-                         !(amin.z > bmax.z || amax.z < bmin.z));
+        u32 intersect = TestIntersectionRectToRect(amin, amax,
+                                                   bmin, bmax);
         
         if(!intersect)
             continue;
-        
-        if(!handler)
-            return 1;
         
         dist[0] = bmax.x - amin.x;
         dist[1] = amax.x - bmin.x;
@@ -95,8 +236,8 @@ TestRectToRect(collision_handler_t *handler, entity_t *ea, entity_t *eb, f64 dt)
         
         
         collision_info_t *collision = PushOnStack(&handler->collisions);
-        collision->obj0 = &ea->physics;
-        collision->obj1 = &eb->physics;
+        collision->obj0_id = pa_id;
+        collision->obj1_id = pb_id;
         collision->normal = norm;
         collision->depth = min_dist;
         collision->steps = step_idx;
@@ -116,29 +257,35 @@ CompareCollisionInfo(const void *b0, const void *b1)
 }
 
 internal u32
-TestCollision(collision_handler_t *handler, entity_t *ea, entity_t *eb, f64 dt)
+TestCollision(entity_manager_t *manager, u64 ea, u64 eb, f64 dt)
 {
-    if(ea->box_type == BOX_SPHERE && eb->box_type == BOX_SPHERE)
+    u64 aphysics = GetEntity(manager, ea)->physics_id;
+    u64 bphysics = GetEntity(manager, eb)->physics_id;
+    physics_component_t *pa = GetPhysics(manager, aphysics);
+    physics_component_t *pb = GetPhysics(manager, bphysics);
+    
+    if(pa->box_type == BOX_SPHERE && pb->box_type == BOX_SPHERE)
     {
         return 0;//TestSphereToSphere(handler, ea, eb, dt);
     }
-    else if(ea->box_type == BOX_SPHERE && eb->box_type == BOX_RECT)
+    else if(pa->box_type == BOX_SPHERE && pb->box_type == BOX_RECT)
     {
         return 0;//TestSphereToRect(handler, ea, eb, dt);
     }
-    else if(ea->box_type == BOX_RECT && eb->box_type == BOX_SPHERE)
+    else if(pa->box_type == BOX_RECT && pb->box_type == BOX_SPHERE)
     {
         return 0;//TestSphereToRect(handler, eb, ea, dt);
     }
     else
     {
-        return TestRectToRect(handler, ea, eb, dt);
+        return TestRectToRect(manager, aphysics, bphysics, dt);
     }
 }
 
 internal void
-HandleCollisions(collision_handler_t *handler, f64 dt)
+HandleCollisions(entity_manager_t *manager, f64 dt)
 {
+    collision_handler_t *handler = manager->col_handler;
     u32 collision_count = GetStackCount(handler->collisions);
     qsort(handler->collisions, collision_count, sizeof(*handler->collisions), CompareCollisionInfo);
     
@@ -155,8 +302,8 @@ HandleCollisions(collision_handler_t *handler, f64 dt)
         col_idx++)
     {
         collision = handler->collisions+col_idx;
-        obj0 = collision->obj0;
-        obj1 = collision->obj1;
+        obj0 = GetPhysics(manager, collision->obj0_id);
+        obj1 = GetPhysics(manager, collision->obj1_id);
         steps_left = handler->steps_per_frame - collision->steps;
         
         rel_vel = vec3_sub(obj0->vel, obj1->vel);
@@ -177,6 +324,9 @@ HandleCollisions(collision_handler_t *handler, f64 dt)
         
         obj0->pos = vec3_add(obj0->pos, vec3_scale(obj0->vel, steps_left*secs_per_step));
         obj1->pos = vec3_add(obj1->pos, vec3_scale(obj1->vel, steps_left*secs_per_step));
+        
+        UpdateCollisionBox(obj0);
+        UpdateCollisionBox(obj1);
     }
     
     ClearStack(handler->collisions);

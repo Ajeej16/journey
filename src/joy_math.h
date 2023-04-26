@@ -329,6 +329,8 @@ vec4_scale(v4 v, f32 s)
     result.y = v.y * s;
     result.z = v.z * s;
     result.w = v.w * s;
+    
+    return result;
 }
 
 internal inline v2

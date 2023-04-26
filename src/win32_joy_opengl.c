@@ -251,7 +251,7 @@ START_FRAME(StartFrame)
 {
     gl_renderer *gl = (gl_renderer *)rb;
     
-    glClearColor(0, 0, 0, 255);
+    glClearColor(255, 255, 255, 255);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     
     for(u32 entry = 0;

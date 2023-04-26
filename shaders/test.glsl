@@ -40,7 +40,9 @@ struct light_t {
 };
 
 uniform sampler2D diffuse_map;
+uniform vec4 mat_diffuse;
 uniform sampler2D specular_map;
+uniform vec4 mat_specular;
 uniform light_t light;
 uniform vec3 view_pos;
 
@@ -61,6 +63,6 @@ void main() {
     vec3 specular = light.specular * spec * texture(specular_map, frag_uv).rgb;
     
     vec3 result = ambient + diffuse + specular;
-    out_color = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+    out_color = mat_diffuse;
     
 }

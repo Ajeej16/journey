@@ -270,8 +270,9 @@ PushCube(render_buffer *rb, v3 pos, v3 dim, color tint)
 }*/
 
 inline internal void
-UpdateMaterial(asset_manager_t *assets, model_t *model, u64 material_id)
+UpdateMaterial(asset_manager_t *assets, u64 model_id , u64 material_id)
 {
+    model_t *model = assets->models+model_id;
     // TODO(ajeej): be able to choose which mesh gets which material
     for(u32 m_idx = 0; m_idx < GetStackCount(model->meshes); m_idx++)
         model->meshes[m_idx].material_id = material_id;

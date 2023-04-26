@@ -10,6 +10,7 @@
 #include "joy_assets.c"
 #include "joy_obj_loader.c"
 #include "joy_entity.c"
+#include "joy_octree.h"
 
 global float speed = 0.15f;
 global float mouse_sen = 0.3f;
@@ -22,30 +23,61 @@ global u64 plane_id = 0;
 global u64 cube_id = 0;
 global u64 shader_id = 0;
 
-global entity_t player = {0};
-global entity_t player1 = {0};
+global u64 player = 0;
+global u64 player1 = 0;
 
 global collision_handler_t collision_handler = {0};
+global entity_manager_t *entities = NULL;
+global debug_octree_t octree = {0};
+global octant_t *octree_root = NULL;
+
+global STACK(u64) *boxes = 0;
 
 INIT_APP(InitApp)
 {
+    srand(time(NULL));
+    
     // TODO(ajeej): replace hard coded widths and heights
-    InitCamera(&rb->cam, vec3_init(0.0f, 0.0f, 10.0f), 0.5f, 45.0f, 800, 600);
+    InitCamera(&rb->cam, vec3_init(0.0f, 0.0f, 200.0f), 0.5f, 45.0f, 800, 600);
     shader_id = AddShader(platFunctions, assets, "..\\shaders\\test.glsl");
     
+    entities = CreateEntityManager(4);
+    
     plane_id = CreatePlane(assets, vec2_init(3.0f, 3.0f));
-    cube_id = CreateCube(assets, vec3_init(3.0f, 3.0f, 3.0f));
+    cube_id = CreateCube(assets, vec3_init(1.0f, 1.0f, 1.0f));
+    u32 small_cube_id = CreateCube(assets, vec3_init(1.0f, 1.0f, 1.0f));
+    u32 red = AddMaterial(assets, "red", 0, 0, COLOR(255, 0, 0, 255), COLOR(255, 0, 0, 255));
+    UpdateMaterial(assets, small_cube_id, red);
     
     bag_id = AddModel(platFunctions, assets, "..\\models\\backpack\\backpack.obj",
                       shader_id);
     
-    collision_handler.collisions = NULL;
-    collision_handler.steps_per_frame = 4;
+    player = CreateEntity(entities, vec3_init(-10.0f, 0.0f, 0.0f), 1, cube_id,
+                          (box_info_t){ vec3_init(3.0f, 3.0f, 3.0f) }, BOX_RECT);
+    player1 = CreateEntity(entities, vec3_init(10.0f, 0.0f, 0.0f), 10, cube_id,
+                           (box_info_t){ vec3_init(3.0f, 3.0f, 3.0f) }, BOX_RECT);
     
-    InitEntity(&player, vec3_init(-10.0f, 0.0f, 0.0f), cube_id);
-    InitEntity(&player1, vec3_init(10.0f, 0.0f, 0.0f), cube_id);
-    player.physics.vel = vec3_init(0.0f, 0.0f, 0.0f);
-    player1.physics.vel = vec3_init(0.0f, 0.0f, 0.0f);
+    UpdateVelocity(entities, player, vec3_init(5.0f, 0.0f, 0.0f));
+    
+    i32 a = 58.0f;
+    i32 neg[] = { 1, -1 };
+    u32 rand_idx = 0;
+    for(u32 i = 0; i < 1000; i++)
+    {
+        rand_idx = rand() % 2;
+        f32 x = ((float)rand()/(float)(RAND_MAX)) * a * neg[rand_idx];
+        rand_idx = rand() % 2;
+        f32 y = ((float)rand()/(float)(RAND_MAX)) * a * neg[rand_idx];
+        rand_idx = rand() % 2;
+        f32 z = ((float)rand()/(float)(RAND_MAX)) * a * neg[rand_idx];
+        u64 *id = PushOnStack(&boxes);
+        *id = CreateEntity(entities, vec3_init(x, y, z), 1, small_cube_id, 
+                           (box_info_t){ 1.0f, 1.0f, 1.0f }, BOX_RECT);
+    }
+    
+    octree_root = ConstructOctree(entities, boxes, GetStackCount(boxes), 120.0f, 2);
+    
+    octree = InitDebugOctree(assets, cube_id, octree_root, vec3_init(0.0f, 0.0f, 0.0f), 10);
 }
 
 UPDATE_AND_RENDER(UpdateAndRender)
@@ -120,10 +152,10 @@ UPDATE_AND_RENDER(UpdateAndRender)
     
     UpdateCamera(&rb->cam);
     
-    if(!TestCollision(&collision_handler, &player, &player1, dt))
+    if(!TestCollision(entities, player, player1, dt))
     {
-        UpdatePhysics(&player.physics, dt);
-        UpdatePhysics(&player1.physics, dt);
+        UpdatePhysics(GetPhysics(entities, GetEntity(entities, player)->physics_id), dt);
+        UpdatePhysics(GetPhysics(entities, GetEntity(entities, player1)->physics_id), dt);
     }
     
     //PushQuad(rb, vec3_init(-0.5f, -0.5f, 0.0f), vec2_init(0.5f, 0.5f), COLOR(0, 255, 0, 255));
@@ -131,18 +163,16 @@ UPDATE_AND_RENDER(UpdateAndRender)
     /*PushCube(rb, vec3_init(3.0f, 0.0f, 0.0f), vec3_init(1.0f, 1.0f, 1.0f), COLOR(0, 0, 255, 255));*/
     //PushModel(rb, assets, cube_id);
     
-    HandleCollisions(&collision_handler, dt);
+    HandleCollisions(entities, dt);
     
-    player.col_box = (collision_box_t){
-        vec3_init(player.physics.pos.x-1.5f, player.physics.pos.y-1.5f, player.physics.pos.z-1.5f),
-        vec3_init(player.physics.pos.x+1.5f, player.physics.pos.y+1.5f, player.physics.pos.z+1.5f),
-    };
+    for(u32 i = 0; i < GetStackCount(boxes); i++)
+    {
+        DrawEntity(rb, assets, entities, boxes[i]);
+    }
     
-    player1.col_box = (collision_box_t){
-        vec3_init(player1.physics.pos.x-1.5f, player1.physics.pos.y-1.5f, player1.physics.pos.z-1.5f),
-        vec3_init(player1.physics.pos.x+1.5f, player1.physics.pos.y+1.5f, player1.physics.pos.z+1.5f),
-    };
     
-    DrawEntity(rb, assets, &player1);
-    DrawEntity(rb, assets, &player);
+    DrawDebugOctree(rb, assets, octree);
+    
+    /*DrawEntity(rb, assets, entities, player1);
+    DrawEntity(rb, assets, entities, player);*/
 }
