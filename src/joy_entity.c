@@ -139,6 +139,8 @@ UpdatePhysics(physics_component_t *physics, f64 dt)
     v3 temp = vec3_scale(physics->vel, dt);
     physics->pos = vec3_add(physics->pos, temp);
     
+    physics->force = vec3_init(0.0f, 0.0f, 0.0f);
+    
     UpdateCollisionBox(physics);
 }
 

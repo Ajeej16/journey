@@ -63,6 +63,6 @@ void main() {
     vec3 specular = light.specular * spec * texture(specular_map, frag_uv).rgb;
     
     vec3 result = ambient + diffuse + specular;
-    out_color = mat_diffuse;
+    out_color =  mat_diffuse;
     
 }

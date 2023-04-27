@@ -7,36 +7,14 @@
 #include "joy_renderer.h"
 #include "joy_input.h"
 #include "joy_assets.h"
+#include "joy_load.h"
 #include "joy_platform.h"
 #include "win32_joy_renderer.h"
 
-#include "joy_load.h"
+#include "joy_load.c"
 
 global u8 running = 1;
 
-internal
-UNLOAD_LIB()
-{
-    FreeLibrary(handle);
-}
-
-internal
-LOAD_LIB()
-{
-    return LoadLibraryA(filename);
-}
-
-internal
-LOAD_FUNCTION()
-{
-    return GetProcAddress(handle, funcName);
-}
-
-internal u32
-CreateCopyFile(char *filename, char *newFilename)
-{
-    return CopyFile(filename, newFilename, FALSE);
-}
 
 internal 
 PLATFORM_READ_FILE(Win32ReadFile)
@@ -159,7 +137,71 @@ PLATFORM_CLOSE_FILE(Win32CloseFile)
     CloseHandle(file.handle);
 }
 
-#include "joy_load.c"
+PLATFORM_UNLOAD_CODE(Win32UnloadCode)
+{
+    if (code->dll)
+    {
+        FreeLibrary(code->dll);
+        code->dll = 0;
+    }
+    
+    code->isValid = 0;
+}
+
+PLATFORM_LOAD_CODE(Win32LoadCode)
+{
+    char *dllPath = code->dllPath;
+    char tempDLLPath[FILENAME_MAX];
+    char *tempDLLName = code->tempDLLName;
+    char number[4];
+    char ext[4];
+    
+    u32 periodIndex = CstrFindLast(tempDLLName, '.');
+    char *name = malloc(periodIndex+1);
+    memcpy(name, tempDLLName, periodIndex);
+    name[periodIndex] = '\0';
+    memcpy(ext, tempDLLName+periodIndex+1, 3);
+    ext[3] = '\0';
+    
+    for(u32 attempt = 0;
+        attempt < 128;
+        attempt++)
+    {
+        tempDLLPath[0] = '\0';
+        sprintf(number, "%d", code->tempDLLNum);
+        
+        CstrCatMany(tempDLLPath, buildDir, "\\", 
+                    name, number, ".", ext);
+        
+        if(++code->tempDLLNum >= 1024)
+            code->tempDLLNum = 0;
+        
+        if(CopyFile(dllPath, tempDLLPath, FALSE))
+            break;
+    }
+    
+    free(name);
+    
+    code->dll = LoadLibraryA(tempDLLPath);
+    if(code->dll)
+    {
+        code->isValid = 1;
+        for(u32 funcIdx = 0;
+            funcIdx < code->functionCount;
+            funcIdx++)
+        {
+            void *function = GetProcAddress(code->dll,
+                                            code->functionNames[funcIdx]);
+            if(function)
+                code->functions[funcIdx] = function;
+            else
+                code->isValid = 0;
+        }
+    }
+    
+    if(!code->isValid)
+        Win32UnloadCode(code);
+}
 
 typedef struct timer_t {
     LARGE_INTEGER counts_per_second;
@@ -377,8 +419,8 @@ int WinMain(HINSTANCE instance, HINSTANCE prevInstance,
                    "journey_app.dll",
                    "journey_app_temp.dll");
     
-    LoadCode(&renderCode, buildDir);
-    LoadCode(&appCode, buildDir);
+    Win32LoadCode(&renderCode, buildDir);
+    Win32LoadCode(&appCode, buildDir);
     
     ASSERT(renderCode.isValid && appCode.isValid);
     
@@ -387,6 +429,8 @@ int WinMain(HINSTANCE instance, HINSTANCE prevInstance,
     platFunctions.openFile = Win32OpenFile;
     platFunctions.readFileOfSize = Win32ReadFileOfSize;
     platFunctions.closeFile = Win32CloseFile;
+    platFunctions.unloadCode = Win32UnloadCode;
+    platFunctions.loadCode = Win32LoadCode;
     
     RECT rect = {0};
     GetClientRect(window, &rect);
@@ -410,12 +454,12 @@ int WinMain(HINSTANCE instance, HINSTANCE prevInstance,
     
     Win32InitTimer(&timer);
     Win32StartTimer(&timer);
-    appFunctions.initApp(&platFunctions, rb, &assets);
+    appFunctions.initApp(&platFunctions, rb, &assets, buildDir);
     
     f64 dt = 0.0;
     while(running)
     {
-        dt = 0.1;//Win32EndTimer(&timer, 1);
+        dt = 0.01;//Win32EndTimer(&timer, 1);
         
         Win32ProcessPendingMessages(window, inputState);
         

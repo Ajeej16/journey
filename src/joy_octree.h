@@ -143,6 +143,82 @@ CalculateCOMInternal(octant_t octants[8], f32 total_mass)
     return result;
 }
 
+typedef enum octant_region_t {
+    OCT000 = 0,
+    OCT100,
+    OCT010,
+    OCT110,
+    OCT001,
+    OCT101,
+    OCT011,
+    OCT111,
+} octant_region_t;
+
+internal u32
+GetNewOctant(u32 prev_octant, aabb_t aabb, v3 pos)
+{
+    u32 new_octant = 0;
+    
+    if(pos.x > aabb.max.x)
+        new_octant |= 1;
+    if(pos.y < aabb.min.y)
+        new_octant |= 2;
+    if(pos.z > aabb.max.z)
+        new_octant |= 4;
+    
+    return new_octant;
+}
+
+internal v3
+ApplyForce(physics_component_t *to, v3 from_com, f32 from_mass)
+{
+    v3 r = vec3_sub(to->pos, from_com);
+    f32 inv_dist_sqr = 1.0f/vec3_dot(r, r);
+    
+    to->force = vec3_scale(r, G*to->mass*from_mass*inv_dist_sqr);
+}
+
+internal v3
+SimulateForces(entity_manager_t *entities, octant_t *root, u64 target)
+{
+    physics_component_t *comp = GetPhysics(entities, target);
+    
+    // NOTE(ajeej): Check if the node is external
+    if(root->octants = NULL)
+    {
+        physics_component_t *from = NULL;
+        for(u32 el_idx = 0; el_idx < GetStackCount(root->els); el_idx++)
+        {
+            if(target == root->els[el_idx]) continue;
+            from = GetPhysics(entities, root->els[el_idx]);
+            ApplyForce(comp, from->pos, from->mass);
+        }
+    }
+    
+    aabb_t bounds = root->bounds;
+    f32 dist = vec3_length(vec3_sub(comp->pos, root->center_of_mass));
+    f32 dist_ratio = (bounds.max.x-bounds.min.x)/dist;
+    
+    if(dist_ratio < root->max_dist_ratio)
+        ApplyForce(comp, root->center_of_mass, root->total_mass);
+    else
+    {
+        for(u32 oct_idx = 0; oct_idx < 8; oct_idx++)
+        {
+            if(root->octants[oct_idx].total_mass == 0) continue;
+            SimulateForces(entities, root, target);
+        }
+    }
+}
+
+internal void
+SimulateOctree(entity_manager_t *entities, octant_t *root)
+{
+    u32 el_count = GetStackCount(entities->physics_comps);
+    for(u32 el_idx = 0; el_idx < el_count; el_idx++)
+        SimulateForces(entities, root, el_idx);
+}
+
 internal v3
 InsertObject(entity_manager_t *entities, octant_t *root, u64 id, f32 half_dim)
 {
@@ -172,12 +248,12 @@ InsertObject(entity_manager_t *entities, octant_t *root, u64 id, f32 half_dim)
         v3 p_min = root->bounds.min;
         v3 p_max = root->bounds.max;
         v3 cur_min = vec3_init(p_min.x, p_max.y-half_dim, p_min.z);
-        v3 cur_max = vec3_init(p_min.x+half_dim, p_max.y, p_min.x+half_dim);
+        v3 cur_max = vec3_init(p_min.x+half_dim, p_max.y, p_min.z+half_dim);
         
-        for(u32 y = 0; y < 2; y++)
+        for(u32 z = 0; z < 2; z++)
         {
-            cur_min.z = p_min.x; cur_max.z = p_min.x+half_dim;
-            for(u32 z = 0; z < 2; z++)
+            cur_min.y = p_max.y-half_dim; cur_max.y = p_max.y;
+            for(u32 y = 0; y < 2; y++)
             {
                 cur_min.x = p_min.x; cur_max.x = p_min.x+half_dim;
                 for(u32 x = 0; x < 2; x++, oct_idx++)
@@ -185,11 +261,12 @@ InsertObject(entity_manager_t *entities, octant_t *root, u64 id, f32 half_dim)
                     cur_oct = root->octants+oct_idx;
                     cur_oct->bounds = (aabb_t) { .min = cur_min, .max = cur_max };
                     cur_oct->max = root->max;
+                    cur_oct->max_dist_ratio = root->max_dist_ratio;
                     cur_oct->parent = root;
                     cur_oct->div = 0;
                     cur_oct->els = NULL;
-                    cur_oct->center_of_mass = {0};
-                    cur_oct->totoal_mass = 0;
+                    cur_oct->center_of_mass = vec3_init(0.0f, 0.0f, 0.0f);
+                    cur_oct->total_mass = 0;
                     
                     if(TestIntersection(BOX_RECT, cur_oct->bounds, physics->box_type, physics->col_box))
                         cur_oct->center_of_mass = InsertObject(entities, cur_oct, id, half_dim*0.5f);
@@ -197,9 +274,9 @@ InsertObject(entity_manager_t *entities, octant_t *root, u64 id, f32 half_dim)
                     cur_min.x += half_dim; cur_max.x += half_dim;
                 }
                 
-                cur_min.z += half_dim; cur_max.z += half_dim;
+                cur_min.y -= half_dim; cur_max.y -= half_dim;
             }
-            cur_min.y -= half_dim; cur_max.y -= half_dim;
+            cur_min.z += half_dim; cur_max.z += half_dim;
         }
         
         for(u32 el_idx = 0; el_idx < root->max; el_idx++)
@@ -228,6 +305,68 @@ InsertObject(entity_manager_t *entities, octant_t *root, u64 id, f32 half_dim)
     return root->center_of_mass;
 }
 
+internal void
+UpdateOctree(entity_manager_t *entities, octant_t *root, u64 **out_escaped)
+{
+    u64 *escaped = NULL;
+    if(root->octants)
+    {
+        u64 *free_el = NULL;
+        u32 free_count = 0;
+        physics_component_t *free_comp = NULL;
+        for(u32 oct_idx = 0; oct_idx < 8; oct_idx++)
+        {
+            UpdateOctree(entities, root->octants+oct_idx, &free_el);
+            
+            free_count = GetStackCount(free_el);
+            for(u32 f_idx = 0; f_idx < free_count; f_idx)
+            {
+                free_comp = GetPhysics(entities, free_el[f_idx]);
+                if(!TestIntersection(BOX_RECT, root->bounds,
+                                     free_comp->box_type, free_comp->col_box)) {
+                    root->total_mass -= free_comp->mass;
+                    escaped = PushOnStack(out_escaped);
+                    *escaped = free_el[f_idx];
+                    continue;
+                }
+                
+                u32 new_octant_id = GetNewOctant(oct_idx, root->octants[oct_idx].bounds,
+                                                 free_comp->pos);
+                octant_t *new_octant = root->octants+new_octant_id;
+                
+                new_octant->center_of_mass = InsertObject(entities, new_octant, free_el[f_idx],
+                                                          (root->bounds.max.x-root->bounds.min.x)*0.25f);
+            }
+        }
+        
+        root->center_of_mass = CalculateCOMInternal(root->octants, root->total_mass);
+    }
+    
+    // NOTE(ajeej): We are in an external node; update the center of mass
+    //              and see of any elements have escaped
+    u32 el_count = GetStackCount(root->els);
+    u64 *temp = malloc(el_count*sizeof(*temp));
+    physics_component_t *comp = NULL;
+    u32 el_idx, temp_idx;
+    for(u32 el_idx = 0, temp_idx = 0; el_idx < el_count; el_idx++)
+    {
+        comp = GetPhysics(entities, root->els[el_idx]);
+        if(TestIntersection(BOX_RECT, root->bounds, comp->box_type, comp->col_box))
+            temp[temp_idx++] = root->els[el_idx];
+        else {
+            root->total_mass -= GetPhysics(entities, root->els[el_idx])->mass;
+            escaped = PushOnStack(out_escaped); *escaped = root->els[el_idx];
+        }
+    }
+    
+    ClearStack(root->els);
+    u64 *els = PushArrayOnStack(&root->els, temp_idx);
+    memcpy(els, temp, sizeof(*temp)*temp_idx);
+    free(temp);
+    
+    root->center_of_mass = CalculateCOMExternal(entities, els, temp_idx, root->total_mass);
+}
+
 internal octant_t *
 ConstructOctree(entity_manager_t *entities, u64 *physics_ids, u32 entity_count, f32 dim, u32 max)
 {
@@ -241,7 +380,7 @@ ConstructOctree(entity_manager_t *entities, u64 *physics_ids, u32 entity_count, 
     root->parent = NULL;
     root->div = 0;
     root->els = NULL;
-    root->center_of_mass = {0};
+    root->center_of_mass = vec3_init(0.0f, 0.0f, 0.0f);
     root->total_mass = 0;
     
     for(u32 el_idx = 0; el_idx < entity_count; el_idx++)

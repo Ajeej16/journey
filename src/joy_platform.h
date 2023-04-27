@@ -21,15 +21,23 @@ typedef PLATFORM_READ_FILE_OF_SIZE(platform_read_file_of_size);
 #define PLATFORM_CLOSE_FILE(name) void name(file_info_t file)
 typedef PLATFORM_CLOSE_FILE(platform_close_file);
 
+#define PLATFORM_UNLOAD_CODE(name) void name(loaded_code *code)
+typedef PLATFORM_UNLOAD_CODE(platform_unload_code);
+
+#define PLATFORM_LOAD_CODE(name) void name(loaded_code *code, char *buildDir)
+typedef PLATFORM_LOAD_CODE(platform_load_code);
+
 typedef struct platform_functions {
     platform_read_file *readFile;
     platform_open_file *openFile;
     platform_read_file_of_size *readFileOfSize;
     platform_close_file *closeFile;
+    platform_unload_code *unloadCode;
+    platform_load_code *loadCode;
 } platform_functions;
 
 #define INIT_APP(name) void name(platform_functions *platFunctions, render_buffer *rb,\
-asset_manager_t *assets)
+asset_manager_t *assets, char *buildDir)
 typedef INIT_APP(init_app);
 
 #define UPDATE_AND_RENDER(name) void name(render_buffer *rb, input_state *inputState,\

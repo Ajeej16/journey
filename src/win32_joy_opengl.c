@@ -24,6 +24,7 @@ global PFNGL##type##PROC name;
 #include "joy_input.h"
 #include "joy_gl.h"
 #include "joy_assets.h"
+#include "joy_load.h"
 #include "joy_platform.h"
 #include "win32_joy_renderer.h"
 
@@ -251,7 +252,7 @@ START_FRAME(StartFrame)
 {
     gl_renderer *gl = (gl_renderer *)rb;
     
-    glClearColor(255, 255, 255, 255);
+    glClearColor(0, 0, 0, 255);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     
     for(u32 entry = 0;
