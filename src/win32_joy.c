@@ -459,7 +459,7 @@ int WinMain(HINSTANCE instance, HINSTANCE prevInstance,
     f64 dt = 0.0;
     while(running)
     {
-        dt = 0.01;//Win32EndTimer(&timer, 1);
+        dt = 0.5;//Win32EndTimer(&timer, 1);
         
         Win32ProcessPendingMessages(window, inputState);
         

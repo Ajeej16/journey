@@ -10,7 +10,7 @@
 #define ABS(a) ((a) > 0 ? (a) : -(a))
 #define SQUARE(a) ((a)*(a))
 #define REALLY_BIG 100000.0f
-#define G 6.6743e-11
+#define G 6.6743e-11 * 100000
 
 internal inline f32
 secure_f32_div(f32 num, f32 den)

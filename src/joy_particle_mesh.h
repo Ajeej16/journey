@@ -161,7 +161,7 @@ UpdateParticleMeshGrid(fftwf_function_table_t *fftwf_funcs,
 {
     physics_component_t *comp = entities->physics_comps;
     u32 comp_count = GetStackCount(comp);
-    /*for(u32 idx = 0; idx < comp_count; idx++, comp++)
+    for(u32 idx = 0; idx < comp_count; idx++, comp++)
     {
         v3 new_pos = vec3_add(pm->grid_disp, comp->pos);
         v3 old_pos = pm->id_to_grid[idx].pos;
@@ -187,9 +187,9 @@ UpdateParticleMeshGrid(fftwf_function_table_t *fftwf_funcs,
             pm->id_to_grid[idx].z = new_pos.z/pm->cell_size;
             pm->id_to_grid[idx].pos = new_pos;
         }
-    }*/
+    }
     
-    FillParticleMeshGrid(pm, entities);
+    //FillParticleMeshGrid(pm, entities);
     
     u32 fft_size = pm->dim*pm->dim*(pm->dim/2+1);
     u32 dim_cubed = pm->dim*pm->dim*pm->dim;

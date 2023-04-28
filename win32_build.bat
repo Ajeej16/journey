@@ -3,7 +3,7 @@
 set application_name=journey
 set build_options=
 set includes=-I..\includes\
-set compiler_flags=-nologo -Zi -FC -wd4533 -wd4700 -GS- -Gs9999999
+set compiler_flags=-nologo -Zi -FC -wd4533 -wd4700 -GS- -Gs99999999
 set linker_flags=/LIBPATH:..\libs -opt:ref -incremental:no
 set platform_linker_flags=%linker_flags% user32.lib gdi32.lib winmm.lib
 
